@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css?family=Libre+Franklin');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+$font-family-base: 'Libre Franklin', sans-serif;
+
+$theme-colors: (
+  "primary": #1390B7,
+  "secondary": #9B0047,
+  "light-blue": #E1E8EA,
+  "light": #ffffff,
+  "dark-bg": #273945,
+  "border": #ccc,
+  "gray-bg": #eee,
+  "nav-inactive": #777,
+  "ui-element": #999,
+);
+
+/* Override rounded corners globally */
+$border-radius:               0px;
+$border-radius-lg:            0px;
+$border-radius-sm:            0px;
+
+@import "bootstrap/bootstrap";
