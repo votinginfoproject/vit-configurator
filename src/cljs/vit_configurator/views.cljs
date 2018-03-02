@@ -3,6 +3,23 @@
             [reagent.core :as reagent]
             [vit-configurator.subs :as subs]))
 
+;;TODO I don't expect these are the actual ways to construct the initializer
+;;code, for one the script src is not right. But, until we are defining how
+;;these params are used in the gttp2 code, leaving this as a placeholder.
+;;Feel free to redo these parameters as needed.
+(defn code-snippet [logo title intro theme language official]
+  [:pre.p-2.border.border-black
+   [:code
+    "<script src=\"js/compiled/app.js\"></script>\n"
+    "<div id=\"_vit\" class=\"app-container\"></div>\n"
+    "<script>gttp2.core.init(\"_vit\",{\n"
+    "\tlogo: " (pr-str logo) ",\n"
+    "\ttitle: " (pr-str title) ",\n"
+    "\tintro: " (pr-str intro) ",\n"
+    "\ttheme: " (pr-str theme) ",\n"
+    "\tlanguage: " (pr-str language) ",\n"
+    "\tofficial-only: " (pr-str official) "});</script>"]])
+
 (defn open-card
   [title-str key-val content]
   [:div.card.ml-3.mr-3.mb-2.pb-0 {:key (gensym key-val)
@@ -32,7 +49,13 @@
          content]]])))
 
 (defn main-panel []
-  [:div.container
+  (let [logo @(re-frame/subscribe [::subs/logo])
+        title @(re-frame/subscribe [::subs/title])
+        intro @(re-frame/subscribe [::subs/intro])
+        theme @(re-frame/subscribe [::subs/theme])
+        language @(re-frame/subscribe [::subs/language])
+        official @(re-frame/subscribe [::subs/official-data-only])]
+    [:div.container
    [:div.row.justify-content-start {:style {"box-shadow" "0px 4px 2px grey"
                                             "margin-bottom" "4px"}}
     [:div.col-1 [:img {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]
@@ -63,4 +86,4 @@
      [:div.container.d-flex.justify-content-center.pb-3
       [:img {:src "./images/responsive-mockup.jpeg"}]]
      [open-card "Your custom embed code" :embed
-      [:p "Code snippet goes here"]]]]])
+      [code-snippet logo title intro theme language official]]]]]))
