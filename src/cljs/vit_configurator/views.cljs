@@ -1,7 +1,8 @@
 (ns vit-configurator.views
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
-            [vit-configurator.subs :as subs]))
+            [vit-configurator.subs :as subs]
+            [vit-configurator.views.logo :as logo]))
 
 ;;TODO I don't expect these are the actual ways to construct the initializer
 ;;code, for one the script src is not right. But, until we are defining how
@@ -36,7 +37,7 @@
     ;;Note: we only care about initially-closed? on the initial outer call,
     ;;so we ignore the parameter in the render function below /shrug
     (fn [title-str key-val _ content]
-      [:div.card.ml-3.mr-3.mb-2.pb-0 {:key (gensym key-val)
+      [:div.card.ml-1.mr-1.mb-2.pb-0 {:key (gensym key-val)
                                       :style {"box-shadow" "4px 4px grey"}}
        [:div.card-body.pb-0
         [:p.card-title.text-secondary.font-weight-bold
@@ -47,6 +48,7 @@
         [:div.gttp-card-text-wrapper
          {:class (if @card-closed? "d-none" "d-block")}
          content]]])))
+
 
 (defn main-panel []
   (let [logo @(re-frame/subscribe [::subs/logo])
@@ -75,7 +77,7 @@
       " state seal or your organization's logo, including a custom alert,"
       " such as \"Don't forget to vote on Election Day!\", or by modifying"
       " the colors."]
-     [card "Logo" :logo false [:p "Logo content goes here"]]
+     [card "Logo" :logo false [logo/customizer logo]]
      [card "Homescreen text" :title true [:p "Homescreen text options goes here"]]
      [card "Color theme" :themes true [:p "Theme picker goes here"]]
      [card "Language" :language true [:p "Default language picker goes here"]]
