@@ -1,7 +1,8 @@
 (ns vit-configurator.views.logo
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
-            [vit-configurator.events :as events]))
+            [vit-configurator.events :as events]
+            [vit-configurator.subs :as subs]))
 
 (def seals
   [[:al "Alabama" "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Seal_of_Alabama.svg/240px-Seal_of_Alabama.svg.png"]
@@ -64,62 +65,60 @@
             :key (name abbreviation)} state-name])
 
 (defn customizer
-  "param is a map with a type and an optional value. type is one of:
-  :default, :state-seal, :none, or :custom. If the type is :state-seal
-  then :value is the selected state abbreviation keyword. If the type
-  is :custom, the value is the url string for the image file."
-  [logo]
-  (let [custom-logo-value (if (= :custom (:type logo))
-                            (reagent/atom (:value logo))
-                            (reagent/atom ""))]
-    (fn [{:keys [type value]}]
-      [:div.container.justify-space-between
-       [:div.row.mb-4 {:style {:height "130"}}
-        [:div.col
-         [:h6.text-uppercase "Default"]
-         [:div.h-75 {:class (if (= :default type) "border-active" "border")
-                     :on-click #(re-frame/dispatch [::events/set-logo :default])}
-          [:div.pt-4
-           [:img.mx-auto.d-block
-            {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"
-             :width "50" :height "49"}]]]]
-        [:div.col
-         [:h6.text-uppercase "State Seal"]
-         (let [current (if (= :state-seal type)
-                         value :al)]
-           [:div.h-75 {:class (if (= :state-seal type)
-                                "border-active" "border")}
-            [:select {:value (name current)
-                      :on-change (fn [selection]
-                                   (let [abbrev (-> selection
-                                                    (.. -target -value)
-                                                    keyword)]
-                                     (re-frame/dispatch [::events/set-logo :state-seal abbrev])))}
-             (map select-option seals)]
-            [:img.mx-auto.d-block {:width "50" :height "50"
-                                   :src (->> seals
-                                             (filter #(= current (first %)))
-                                             first
-                                             last)}]])]
-        [:div.col
-         [:h6.text-uppercase "None"]
-         [:div.h-75 {:class (if (= :none type) "border-active" "border")
-                     :on-click #(re-frame/dispatch [::events/set-logo :none])}
-          [:div.pt-4
-           [:img.mx-auto.d-block {:width "50" :height "50"
-                                  :src "images/circle-slash.png"}]]]]]
-       [:div.row.border.mx-1.mb-2 {:style {:height "130"}}
-        [:div.col {:class (if (= :custom type)
-                            "border-active" "border")}
-         [:h6 "Url"]
-         [:input {:value @custom-logo-value
-                  :type :text
-                  :on-change #(reset! custom-logo-value (.. % -target -value))
-                  :on-blur #(re-frame/dispatch
-                             [::events/set-logo :custom @custom-logo-value])}]
-         [:div.pt-2
-          (if (= :custom type)
-            [:img {:src value :width "50" :height "50"}]
-            [:img.mx-auto.d-block {:width "50" :height "50"
-                                   :src "images/circle-slash.png"}])]]]])))
+  "The component local state (custom-logo-value) keeps track of the dirty
+   state of the custom URL entry, and on blur that gets emitted as an event.
+   A subscription to ::subs/logo allows it to react to changes in the widget."
+  []
+  (let [custom-logo-value (reagent/atom "")]
+    (fn []
+      (let [{:keys [type value]} @(re-frame/subscribe [::subs/logo])]
+        [:div.container.justify-space-between
+         [:div.row.mb-4 {:style {:height "130"}}
+          [:div.col
+           [:h6.text-uppercase "Default"]
+           [:div.h-75 {:class (if (= :default type) "border-active" "border")
+                       :on-click #(re-frame/dispatch [::events/set-logo :default])}
+            [:div.pt-4
+             [:img.mx-auto.d-block
+              {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"
+               :width "50" :height "49"}]]]]
+          [:div.col
+           [:h6.text-uppercase "State Seal"]
+           (let [current (if (= :state-seal type)
+                           value :al)]
+             [:div.h-75 {:class (if (= :state-seal type)
+                                  "border-active" "border")}
+              [:select {:value (name current)
+                        :on-change (fn [selection]
+                                     (let [abbrev (-> selection
+                                                      (.. -target -value)
+                                                      keyword)]
+                                       (re-frame/dispatch [::events/set-logo :state-seal abbrev])))}
+               (map select-option seals)]
+              [:img.mx-auto.d-block {:width "50" :height "50"
+                                     :src (->> seals
+                                               (filter #(= current (first %)))
+                                               first
+                                               last)}]])]
+          [:div.col
+           [:h6.text-uppercase "None"]
+           [:div.h-75 {:class (if (= :none type) "border-active" "border")
+                       :on-click #(re-frame/dispatch [::events/set-logo :none])}
+            [:div.pt-4
+             [:img.mx-auto.d-block {:width "50" :height "50"
+                                    :src "images/circle-slash.png"}]]]]]
+         [:div.row.border.mx-1.mb-2 {:style {:height "130"}}
+          [:div.col {:class (if (= :custom type)
+                              "border-active" "border")}
+           [:h6 "Url"]
+           [:input {:value @custom-logo-value
+                    :type :text
+                    :on-change #(reset! custom-logo-value (.. % -target -value))
+                    :on-blur #(re-frame/dispatch
+                               [::events/set-logo :custom @custom-logo-value])}]
+           [:div.pt-2
+            (if (= :custom type)
+              [:img {:src value :width "50" :height "50"}]
+              [:img.mx-auto.d-block {:width "50" :height "50"
+                                     :src "images/circle-slash.png"}])]]]]))))
 

@@ -77,7 +77,7 @@
       " state seal or your organization's logo, including a custom alert,"
       " such as \"Don't forget to vote on Election Day!\", or by modifying"
       " the colors."]
-     [card "Logo" :logo false [logo/customizer logo]]
+     [card "Logo" :logo false [logo/customizer]]
      [card "Homescreen text" :title true [:p "Homescreen text options goes here"]]
      [card "Color theme" :themes true [:p "Theme picker goes here"]]
      [card "Language" :language true [:p "Default language picker goes here"]]
