@@ -13,3 +13,13 @@
    (if (#{:state-seal :custom} type)
      (assoc db :logo {:type type :value optional-value})
      (assoc db :logo {:type type}))))
+
+(re-frame/reg-event-db
+ ::set-title
+ (fn [db [_ title]]
+   (assoc db :title title)))
+
+(re-frame/reg-event-db
+ ::set-intro
+ (fn [db [_ intro]]
+   (assoc db :intro intro)))

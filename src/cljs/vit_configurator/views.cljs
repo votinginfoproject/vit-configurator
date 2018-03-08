@@ -2,14 +2,17 @@
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [vit-configurator.subs :as subs]
-            [vit-configurator.views.logo :as logo]))
+            [vit-configurator.views.logo :as logo]
+            [vit-configurator.views.homescreen :as homescreen]))
 
 ;;TODO I don't expect these are the actual ways to construct the initializer
 ;;code, for one the script src is not right. But, until we are defining how
 ;;these params are used in the gttp2 code, leaving this as a placeholder.
 ;;Feel free to redo these parameters as needed.
-(defn code-snippet [title intro theme language official]
-  (let [logo @(re-frame/subscribe [::subs/logo])]
+(defn code-snippet [theme language official]
+  (let [logo @(re-frame/subscribe [::subs/logo])
+        title @(re-frame/subscribe [::subs/title])
+        intro @(re-frame/subscribe [::subs/intro])]
     [:pre.p-2.border.border-black
      [:code
       "<script src=\"js/compiled/app.js\"></script>\n"
@@ -52,9 +55,7 @@
 
 
 (defn main-panel []
-  (let [title @(re-frame/subscribe [::subs/title])
-        intro @(re-frame/subscribe [::subs/intro])
-        theme @(re-frame/subscribe [::subs/theme])
+  (let [theme @(re-frame/subscribe [::subs/theme])
         language @(re-frame/subscribe [::subs/language])
         official @(re-frame/subscribe [::subs/official-data-only])]
     [:div.container
@@ -77,8 +78,8 @@
       " state seal or your organization's logo, including a custom alert,"
       " such as \"Don't forget to vote on Election Day!\", or by modifying"
       " the colors."]
-     [card "Logo" :logo false [logo/customizer]]
-     [card "Homescreen text" :title true [:p "Homescreen text options goes here"]]
+     [card "Logo" :logo true [logo/customizer]]
+     [card "Homescreen text" :title false [homescreen/customizer]]
      [card "Color theme" :themes true [:p "Theme picker goes here"]]
      [card "Language" :language true [:p "Default language picker goes here"]]
      [card "Official data use" :official-data true [:p "Official data selector goes here"]]
@@ -88,4 +89,4 @@
      [:div.container.d-flex.justify-content-center.pb-3
       [:img {:src "./images/responsive-mockup.jpeg"}]]
      [open-card "Your custom embed code" :embed
-      [code-snippet title intro theme language official]]]]]))
+      [code-snippet theme language official]]]]]))
