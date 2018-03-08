@@ -8,18 +8,19 @@
 ;;code, for one the script src is not right. But, until we are defining how
 ;;these params are used in the gttp2 code, leaving this as a placeholder.
 ;;Feel free to redo these parameters as needed.
-(defn code-snippet [logo title intro theme language official]
-  [:pre.p-2.border.border-black
-   [:code
-    "<script src=\"js/compiled/app.js\"></script>\n"
-    "<div id=\"_vit\" class=\"app-container\"></div>\n"
-    "<script>gttp2.core.init(\"_vit\",{\n"
-    "\tlogo: " (pr-str logo) ",\n"
-    "\ttitle: " (pr-str title) ",\n"
-    "\tintro: " (pr-str intro) ",\n"
-    "\ttheme: " (pr-str theme) ",\n"
-    "\tlanguage: " (pr-str language) ",\n"
-    "\tofficial-only: " (pr-str official) "});</script>"]])
+(defn code-snippet [title intro theme language official]
+  (let [logo @(re-frame/subscribe [::subs/logo])]
+    [:pre.p-2.border.border-black
+     [:code
+      "<script src=\"js/compiled/app.js\"></script>\n"
+      "<div id=\"_vit\" class=\"app-container\"></div>\n"
+      "<script>gttp2.core.init(\"_vit\",{\n"
+      "\tlogo: " (pr-str logo) ",\n"
+      "\ttitle: " (pr-str title) ",\n"
+      "\tintro: " (pr-str intro) ",\n"
+      "\ttheme: " (pr-str theme) ",\n"
+      "\tlanguage: " (pr-str language) ",\n"
+      "\tofficial-only: " (pr-str official) "});</script>"]]))
 
 (defn open-card
   [title-str key-val content]
@@ -51,8 +52,7 @@
 
 
 (defn main-panel []
-  (let [logo @(re-frame/subscribe [::subs/logo])
-        title @(re-frame/subscribe [::subs/title])
+  (let [title @(re-frame/subscribe [::subs/title])
         intro @(re-frame/subscribe [::subs/intro])
         theme @(re-frame/subscribe [::subs/theme])
         language @(re-frame/subscribe [::subs/language])
@@ -88,4 +88,4 @@
      [:div.container.d-flex.justify-content-center.pb-3
       [:img {:src "./images/responsive-mockup.jpeg"}]]
      [open-card "Your custom embed code" :embed
-      [code-snippet logo title intro theme language official]]]]]))
+      [code-snippet title intro theme language official]]]]]))
