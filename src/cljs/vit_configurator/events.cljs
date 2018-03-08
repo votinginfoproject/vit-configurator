@@ -23,3 +23,8 @@
  ::set-intro
  (fn [db [_ intro]]
    (assoc db :intro intro)))
+
+(re-frame/reg-event-db
+ ::set-language
+ (fn [db [_ lang]]
+   (assoc db :language lang)))

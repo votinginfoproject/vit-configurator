@@ -3,7 +3,8 @@
             [reagent.core :as reagent]
             [vit-configurator.subs :as subs]
             [vit-configurator.views.logo :as logo]
-            [vit-configurator.views.homescreen :as homescreen]))
+            [vit-configurator.views.homescreen :as homescreen]
+            [vit-configurator.views.language :as language]))
 
 ;;TODO I don't expect these are the actual ways to construct the initializer
 ;;code, for one the script src is not right. But, until we are defining how
@@ -12,7 +13,8 @@
 (defn code-snippet [theme language official]
   (let [logo @(re-frame/subscribe [::subs/logo])
         title @(re-frame/subscribe [::subs/title])
-        intro @(re-frame/subscribe [::subs/intro])]
+        intro @(re-frame/subscribe [::subs/intro])
+        language @(re-frame/subscribe [::subs/language])]
     [:pre.p-2.border.border-black
      [:code
       "<script src=\"js/compiled/app.js\"></script>\n"
@@ -56,7 +58,6 @@
 
 (defn main-panel []
   (let [theme @(re-frame/subscribe [::subs/theme])
-        language @(re-frame/subscribe [::subs/language])
         official @(re-frame/subscribe [::subs/official-data-only])]
     [:div.container
    [:div.row.justify-content-start {:style {"box-shadow" "0px 4px 2px grey"
@@ -79,9 +80,9 @@
       " such as \"Don't forget to vote on Election Day!\", or by modifying"
       " the colors."]
      [card "Logo" :logo true [logo/customizer]]
-     [card "Homescreen text" :title false [homescreen/customizer]]
+     [card "Homescreen text" :title true [homescreen/customizer]]
      [card "Color theme" :themes true [:p "Theme picker goes here"]]
-     [card "Language" :language true [:p "Default language picker goes here"]]
+     [card "Language" :language false [language/customizer]]
      [card "Official data use" :official-data true [:p "Official data selector goes here"]]
      [card "Custom Election Info links" :links true [:p "Custom Election Info links go here"]]]
     [:div.col-7.d-flex.flex-column
@@ -89,4 +90,4 @@
      [:div.container.d-flex.justify-content-center.pb-3
       [:img {:src "./images/responsive-mockup.jpeg"}]]
      [open-card "Your custom embed code" :embed
-      [code-snippet theme language official]]]]]))
+      [code-snippet theme official]]]]]))
