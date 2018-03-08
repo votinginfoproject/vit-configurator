@@ -33,3 +33,8 @@
  ::set-official-data-only
  (fn [db [_ official]]
    (assoc db :official-data-only official)))
+
+(re-frame/reg-event-db
+ ::set-theme
+ (fn [db [_ theme]]
+   (assoc db :theme theme)))

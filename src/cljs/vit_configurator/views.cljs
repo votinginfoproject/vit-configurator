@@ -5,7 +5,8 @@
             [vit-configurator.views.logo :as logo]
             [vit-configurator.views.homescreen :as homescreen]
             [vit-configurator.views.language :as language]
-            [vit-configurator.views.official :as official]))
+            [vit-configurator.views.official :as official]
+            [vit-configurator.views.theme :as theme]))
 
 ;;TODO I don't expect these are the actual ways to construct the initializer
 ;;code, for one the script src is not right. But, until we are defining how
@@ -82,9 +83,9 @@
         " the colors."]
        [card "Logo" :logo true [logo/customizer]]
        [card "Homescreen text" :title true [homescreen/customizer]]
-       [card "Color theme" :themes true [:p "Theme picker goes here"]]
+       [card "Color theme" :themes false [theme/customizer]]
        [card "Language" :language true [language/customizer]]
-       [card "Official data use" :official-data false [official/customizer]]
+       [card "Official data use" :official-data true [official/customizer]]
        [card "Custom Election Info links" :links true [:p "Custom Election Info links go here"]]]
       [:div.col-7.d-flex.flex-column
        [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
