@@ -82,13 +82,13 @@
             [:div.pt-2
              [:img.mx-auto.d-block
               {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"
-               :width "50" :height "49"}]]]]
+               :width 50 :height 49}]]]]
           [:div.col
            [:h6.text-uppercase "None"]
            [:div.h-75 {:class (if (= :none type) "border-active" "border")
                        :on-click #(re-frame/dispatch [::events/set-logo :none])}
             [:div.pt-2
-             [:img.mx-auto.d-block {:width "50" :height "50"
+             [:img.mx-auto.d-block {:width 50 :height 50
                                     :src "images/circle-slash.png"}]]]]]
          [:div.row.mb-3
           [:div.col
@@ -110,12 +110,12 @@
                                                       @state-seal-value])}
             [:div.pt-2.pb-3
              [:img.mx-auto.d-block
-              {:width "50" :height "50"
+              {:width 50 :height 50
                :src (->> seals
                          (filter #(= @state-seal-value (first %)))
                          first
                          last)}]]]]]
-         [:div.row.mx-1.mb-2.d-flex.flex-column {:style {:height "150"}}
+         [:div.row.mx-1.mb-2.d-flex.flex-column {:style {:height 150}}
           [:h6.text-uppercase "Url"]
           [:input {:value @custom-logo-value
                    :type :text
