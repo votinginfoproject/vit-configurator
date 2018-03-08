@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+if [ "$1" = "staging" ]; then
+    BUCKET="s3://vit-configurator-staging.votinginfoproject.org/"
+elif [ "$1" = "prod" ]; then
+    # BUCKET="s3://TODO"
+    echo "Prod not deployable yet!"
+    exit 1
+else
+    echo "Usage: $0 [staging|prod]"
+    exit 1
+fi
+
+./script/build
+
+aws s3 sync --delete target/output/public "$BUCKET"

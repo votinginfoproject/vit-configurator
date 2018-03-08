@@ -1,0 +1,16 @@
+#!/bin/bash
+
+export ASSET_DIR=resources/public
+export OUTPUT_DIR=./target/output
+export DOCKER_TAG=vit-configurator
+export DOCKER_CONTAINER=vit-configurator-build
+export DOCKER_WORKDIR=/vit-configurator
+
+rm -rf $OUTPUT_DIR
+mkdir -p $OUTPUT_DIR
+docker build \
+       -t $DOCKER_TAG .
+docker run \
+       --name $DOCKER_CONTAINER $DOCKER_TAG
+docker cp $DOCKER_CONTAINER:$DOCKER_WORKDIR/$ASSET_DIR $OUTPUT_DIR
+docker rm $DOCKER_CONTAINER

@@ -1,4 +1,9 @@
 (ns vit-configurator.db)
 
 (def default-db
-  {:name "re-frame"})
+  {:logo :default
+   :title :default
+   :intro :default
+   :theme :default
+   :language :en
+   :official-data-only true})

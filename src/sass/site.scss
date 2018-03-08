@@ -7,10 +7,9 @@ $theme-colors: (
   "primary": #1390B7,
   "secondary": #9B0047,
   "light-blue": #E1E8EA,
-  "light": #ffffff,
+  "light": #eee,
   "dark-bg": #273945,
   "border": #ccc,
-  "gray-bg": #eee,
   "nav-inactive": #777,
   "ui-element": #999,
 );
@@ -21,3 +20,16 @@ $border-radius-lg:            0px;
 $border-radius-sm:            0px;
 
 @import "bootstrap/bootstrap";
+
+i.toggle-card {
+  position: absolute;
+  right: 2%;
+  top: 0;
+  color: theme-color("ui-element");
+  font-size: 3.6em;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
