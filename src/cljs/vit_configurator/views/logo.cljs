@@ -69,56 +69,66 @@
    state of the custom URL entry, and on blur that gets emitted as an event.
    A subscription to ::subs/logo allows it to react to changes in the widget."
   []
-  (let [custom-logo-value (reagent/atom "")]
+  (let [custom-logo-value (reagent/atom "")
+        state-seal-value (reagent/atom :al)]
     (fn []
       (let [{:keys [type value]} @(re-frame/subscribe [::subs/logo])]
         [:div.container.justify-space-between
-         [:div.row.mb-4 {:style {:height "130"}}
+         [:div.row.mb-4
           [:div.col
            [:h6.text-uppercase "Default"]
            [:div.h-75 {:class (if (= :default type) "border-active" "border")
                        :on-click #(re-frame/dispatch [::events/set-logo :default])}
-            [:div.pt-4
+            [:div.pt-2
              [:img.mx-auto.d-block
               {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"
                :width "50" :height "49"}]]]]
           [:div.col
-           [:h6.text-uppercase "State Seal"]
-           (let [current (if (= :state-seal type)
-                           value :al)]
-             [:div.h-75 {:class (if (= :state-seal type)
-                                  "border-active" "border")}
-              [:select {:value (name current)
-                        :on-change (fn [selection]
-                                     (let [abbrev (-> selection
-                                                      (.. -target -value)
-                                                      keyword)]
-                                       (re-frame/dispatch [::events/set-logo :state-seal abbrev])))}
-               (map select-option seals)]
-              [:img.mx-auto.d-block {:width "50" :height "50"
-                                     :src (->> seals
-                                               (filter #(= current (first %)))
-                                               first
-                                               last)}]])]
-          [:div.col
            [:h6.text-uppercase "None"]
            [:div.h-75 {:class (if (= :none type) "border-active" "border")
                        :on-click #(re-frame/dispatch [::events/set-logo :none])}
-            [:div.pt-4
+            [:div.pt-2
              [:img.mx-auto.d-block {:width "50" :height "50"
                                     :src "images/circle-slash.png"}]]]]]
-         [:div.row.border.mx-1.mb-2 {:style {:height "130"}}
-          [:div.col {:class (if (= :custom type)
-                              "border-active" "border")}
-           [:h6 "Url"]
-           [:input {:value @custom-logo-value
-                    :type :text
-                    :on-change #(reset! custom-logo-value (.. % -target -value))
-                    :on-blur #(re-frame/dispatch
-                               [::events/set-logo :custom @custom-logo-value])}]
-           [:div.pt-2
-            (if (= :custom type)
-              [:img {:src value :width "50" :height "50"}]
-              [:img.mx-auto.d-block {:width "50" :height "50"
-                                     :src "images/circle-slash.png"}])]]]]))))
-
+         [:div.row.mb-3
+          [:div.col
+           [:h6.text-uppercase "State Seal"]
+           [:select
+            {:value @state-seal-value
+             :on-change (fn [selection]
+                          (let [abbrev (-> selection
+                                           (.. -target -value)
+                                           keyword)]
+                            (reset! state-seal-value abbrev)
+                            (when (= :state-seal type)
+                              (re-frame/dispatch [::events/set-logo :state-seal
+                                                  abbrev]))))}
+            (map select-option seals)]
+           [:div.h-50 {:class (if (= :state-seal type)
+                                "border-active" "border")
+                       :on-click #(re-frame/dispatch [::events/set-logo :state-seal
+                                                      @state-seal-value])}
+            [:div.pt-2.pb-3
+             [:img.mx-auto.d-block
+              {:width "50" :height "50"
+               :src (->> seals
+                         (filter #(= @state-seal-value (first %)))
+                         first
+                         last)}]]]]]
+         [:div.row.mx-1.mb-2.d-flex.flex-column {:style {:height "150"}}
+          [:h6.text-uppercase "Url"]
+          [:input {:value @custom-logo-value
+                   :type :text
+                   :placeholder "https://your.server/img/logo.png"
+                   :on-change (fn [evt]
+                                (let [val (.. evt -target -value)]
+                                  (reset! custom-logo-value val)
+                                  (when (= :custom type)
+                                    (re-frame/dispatch
+                                     [::events/set-logo :custom val]))))}]
+          [:div {:class (if (= :custom type)
+                          "border-active" "border")
+                 :on-click #(re-frame/dispatch
+                             [::events/set-logo :custom @custom-logo-value])}
+           [:div.pt-2.pb-2
+            [:img.mx-auto.d-block {:src @custom-logo-value :width "50" :height "50"}]]]]]))))
