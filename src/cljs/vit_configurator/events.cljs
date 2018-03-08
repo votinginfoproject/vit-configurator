@@ -28,3 +28,8 @@
  ::set-language
  (fn [db [_ lang]]
    (assoc db :language lang)))
+
+(re-frame/reg-event-db
+ ::set-official-data-only
+ (fn [db [_ official]]
+   (assoc db :official-data-only official)))
