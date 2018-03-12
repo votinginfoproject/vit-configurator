@@ -80,16 +80,15 @@
            [:div.h-75 {:class (if (= :default type) "border-active" "border")
                        :on-click #(re-frame/dispatch [::events/set-logo :default])}
             [:div.pt-2
-             [:img.mx-auto.d-block
-              {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"
-               :width 50 :height 49}]]]]
+             [:img.mx-auto.d-block.vip-logo
+              {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]]]
           [:div.col
            [:h6.text-uppercase "None"]
            [:div.h-75 {:class (if (= :none type) "border-active" "border")
                        :on-click #(re-frame/dispatch [::events/set-logo :none])}
             [:div.pt-2
-             [:img.mx-auto.d-block {:width 50 :height 50
-                                    :src "images/circle-slash.png"}]]]]]
+             [:img.mx-auto.d-block.squared-logo
+              {:src "images/circle-slash.png"}]]]]]
          [:div.row.mb-3
           [:div.col
            [:h6.text-uppercase "State Seal"]
@@ -109,13 +108,12 @@
                        :on-click #(re-frame/dispatch [::events/set-logo :state-seal
                                                       @state-seal-value])}
             [:div.pt-2.pb-3
-             [:img.mx-auto.d-block
-              {:width 50 :height 50
-               :src (->> seals
+             [:img.mx-auto.d-block.squared-logo
+              {:src (->> seals
                          (filter #(= @state-seal-value (first %)))
                          first
                          last)}]]]]]
-         [:div.row.mx-1.mb-2.d-flex.flex-column {:style {:height 150}}
+         [:div.row.mx-1.mb-2.d-flex.flex-column.h-150-static
           [:h6.text-uppercase "Url"]
           [:input {:value @custom-logo-value
                    :type :text
@@ -130,5 +128,6 @@
                           "border-active" "border")
                  :on-click #(re-frame/dispatch
                              [::events/set-logo :custom @custom-logo-value])}
-           [:div.pt-2.pb-2
-            [:img.mx-auto.d-block {:src @custom-logo-value :width "50" :height "50"}]]]]]))))
+           [:div.pt-2.pb-2.h-50-static
+            [:img.mx-auto.d-block.squared-logo
+             {:src @custom-logo-value}]]]]]))))

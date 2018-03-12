@@ -28,10 +28,9 @@ from the Google Civic Information API?")
                     {:key (name key)
                      :on-click #(re-frame/dispatch [::events/set-theme key])}
                     (if (= current-theme key)
-                      {:style {:border "5px solid black"}}
-                      {:style {:border "1px solid black"}}))
-     [:div.col {:style {:height 20
-                        :background-color first-color}}]
+                      {:class "selected-border"}
+                      {:class "border"}))
+     [:div.col.h-25-static {:style {:background-color first-color}}]
      [:div.col {:style {:background-color second-color}}]
      [:div.col {:style {:background-color third-color}}]
      [:div.col {:style {:background-color fourth-color}}]]))
