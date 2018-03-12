@@ -2,9 +2,10 @@
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [vit-configurator.subs :as subs]
-            [vit-configurator.views.logo :as logo]
             [vit-configurator.views.homescreen :as homescreen]
             [vit-configurator.views.language :as language]
+            [vit-configurator.views.links :as links]
+            [vit-configurator.views.logo :as logo]
             [vit-configurator.views.official :as official]
             [vit-configurator.views.theme :as theme]))
 
@@ -12,12 +13,14 @@
 ;;code, for one the script src is not right. But, until we are defining how
 ;;these params are used in the gttp2 code, leaving this as a placeholder.
 ;;Feel free to redo these parameters as needed.
-(defn code-snippet [theme]
+(defn code-snippet []
   (let [logo @(re-frame/subscribe [::subs/logo])
         title @(re-frame/subscribe [::subs/title])
         intro @(re-frame/subscribe [::subs/intro])
+        theme @(re-frame/subscribe [::subs/theme])
         language @(re-frame/subscribe [::subs/language])
-        official @(re-frame/subscribe [::subs/official-data-only])]
+        official @(re-frame/subscribe [::subs/official-data-only])
+        links @(re-frame/subscribe [::subs/links])]
     [:pre.p-2.border.border-black
      [:code
       "<script src=\"js/compiled/app.js\"></script>\n"
@@ -28,7 +31,8 @@
       "\tintro: " (pr-str intro) ",\n"
       "\ttheme: " (pr-str theme) ",\n"
       "\tlanguage: " (pr-str language) ",\n"
-      "\tofficial-only: " (pr-str official) "});</script>"]]))
+      "\tofficial-only: " (pr-str official) ",\n"
+      "\tlinks: " (pr-str links) "});</script>"]]))
 
 (defn open-card
   [title-str key-val content]
@@ -60,36 +64,35 @@
 
 
 (defn main-panel []
-  (let [theme @(re-frame/subscribe [::subs/theme])]
-    [:div.container
-     [:div.row.justify-content-start {:style {"box-shadow" "0px 4px 2px grey"
-                                              "margin-bottom" "4px"}}
-      [:div.col-1 [:img {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]
-      [:div.col-6
-       [:h6.text-uppercase "Voting Information Project"]
-       [:h3 "Custom Widget Dashboard"]]]
-     [:div.row.bg-light
-      [:div.col-5.d-flex.flex-column
-       [:p.pt-5.pl-5.pr-5
-        [:strong "The Voting Information Tool"] "is an easily embeddable,"
-        " mobile-optimized, white-label voting information tool that offers"
-        " official voting information-such as polling place and ballot"
-        " information-to anyone, using just a residential address. The tool"
-        " can be embedded easily on any website and supports multiple languages."]
-       [:p.pl-5.pr-5.pb-2
-        "Using this widget you can easily customize the VIT by adding a"
-        " state seal or your organization's logo, including a custom alert,"
-        " such as \"Don't forget to vote on Election Day!\", or by modifying"
-        " the colors."]
-       [card "Logo" :logo true [logo/customizer]]
-       [card "Homescreen text" :title true [homescreen/customizer]]
-       [card "Color theme" :themes false [theme/customizer]]
-       [card "Language" :language true [language/customizer]]
-       [card "Official data use" :official-data true [official/customizer]]
-       [card "Custom Election Info links" :links true [:p "Custom Election Info links go here"]]]
-      [:div.col-7.d-flex.flex-column
-       [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
-       [:div.container.d-flex.justify-content-center.pb-3
-        [:img {:src "./images/responsive-mockup.jpeg"}]]
-       [open-card "Your custom embed code" :embed
-        [code-snippet theme]]]]]))
+  [:div.container
+   [:div.row.justify-content-start {:style {"box-shadow" "0px 4px 2px grey"
+                                            "margin-bottom" "4px"}}
+    [:div.col-1 [:img {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]
+    [:div.col-6
+     [:h6.text-uppercase "Voting Information Project"]
+     [:h3 "Custom Widget Dashboard"]]]
+   [:div.row.bg-light
+    [:div.col-5.d-flex.flex-column
+     [:p.pt-5.pl-5.pr-5
+      [:strong "The Voting Information Tool"] "is an easily embeddable,"
+      " mobile-optimized, white-label voting information tool that offers"
+      " official voting information-such as polling place and ballot"
+      " information-to anyone, using just a residential address. The tool"
+      " can be embedded easily on any website and supports multiple languages."]
+     [:p.pl-5.pr-5.pb-2
+      "Using this widget you can easily customize the VIT by adding a"
+      " state seal or your organization's logo, including a custom alert,"
+      " such as \"Don't forget to vote on Election Day!\", or by modifying"
+      " the colors."]
+     [card "Logo" :logo true [logo/customizer]]
+     [card "Homescreen text" :title true [homescreen/customizer]]
+     [card "Color theme" :themes true [theme/customizer]]
+     [card "Language" :language true [language/customizer]]
+     [card "Official data use" :official-data true [official/customizer]]
+     [card "Custom Election Info links" :links false [links/customizer]]]
+    [:div.col-7.d-flex.flex-column
+     [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
+     [:div.container.d-flex.justify-content-center.pb-3
+      [:img {:src "./images/responsive-mockup.jpeg"}]]
+     [open-card "Your custom embed code" :embed
+      [code-snippet]]]]])

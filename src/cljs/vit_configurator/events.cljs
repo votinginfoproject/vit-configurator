@@ -38,3 +38,8 @@
  ::set-theme
  (fn [db [_ theme]]
    (assoc db :theme theme)))
+
+(re-frame/reg-event-db
+ ::set-link-text
+ (fn [db [_ link-kw text]]
+   (assoc-in db [:links link-kw] text)))

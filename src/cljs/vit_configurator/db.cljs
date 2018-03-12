@@ -6,4 +6,5 @@
    :intro :default
    :theme :default
    :language :en
-   :official-data-only true})
+   :official-data-only true
+   :links {}})
