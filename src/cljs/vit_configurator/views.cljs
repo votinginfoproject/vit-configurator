@@ -84,12 +84,12 @@
       " state seal or your organization's logo, including a custom alert,"
       " such as \"Don't forget to vote on Election Day!\", or by modifying"
       " the colors."]
-     [card "Logo" :logo true [logo/customizer]]
+     [card "Logo" :logo false [logo/customizer]]
      [card "Homescreen text" :title true [homescreen/customizer]]
      [card "Color theme" :themes true [theme/customizer]]
      [card "Language" :language true [language/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
-     [card "Custom Election Info links" :links false [links/customizer]]]
+     [card "Custom Election Info links" :links true [links/customizer]]]
     [:div.col-7.d-flex.flex-column
      [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
      [:div.container.d-flex.justify-content-center.pb-3
