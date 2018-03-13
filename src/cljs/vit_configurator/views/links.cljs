@@ -2,39 +2,29 @@
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [vit-configurator.events :as events]
-            [vit-configurator.subs :as subs]))
+            [vit-configurator.subs :as subs]
+            [vit-configurator.views.shared :as shared]))
 
 (def links-text
   "Change the text for the links that appear
 in the Election Contact 'More Info' section.")
 
-(defn link-field [link-kw placeholder component-value]
-  (let [current-value @component-value
+(defn link-field [link-kw placeholder component-state]
+  (let [current-value @component-state
         max-length 45
         diff (- max-length (count current-value))
-        border (when (neg? diff)
-                 {:class "border-danger"})
-        countdown-color (when (neg? diff)
-                          {:class "text-danger"})
-        change-fn (fn [evt]
-                    (let [val (.. evt -target -value)]
-                      (reset! component-value val)
-                      (when (>= (- max-length (count val)) 0)
-                        (re-frame/dispatch [::events/set-link-text
-                                            link-kw val]))))]
+        border (shared/border-class diff)
+        change-fn (shared/max-length-change-fn
+                   max-length component-state [::events/set-link-text link-kw])]
     [:div.col
-     [:input.w-100 (merge (when-let [val current-value]
-                            {:value val})
-                          (when border
-                            border)
+     [:input.w-100 (merge (when current-value
+                            {:value current-value})
+                          border
                           {:on-change change-fn
                            :type "text"
                            :key (str link-kw "-input")
                            :placeholder placeholder})]
-     [:p.small countdown-color
-      (if (>= diff 0)
-        (str "(" diff " characters remaining)")
-        (str "(" (Math/abs diff) " characters over)"))]]))
+     [shared/countdown diff]]))
 
 (defn link-row [current-links row]
   [:div.row

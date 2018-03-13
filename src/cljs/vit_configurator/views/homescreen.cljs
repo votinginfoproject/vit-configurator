@@ -2,7 +2,8 @@
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [vit-configurator.events :as events]
-            [vit-configurator.subs :as subs]))
+            [vit-configurator.subs :as subs]
+            [vit-configurator.views.shared :as shared]))
 
 (def title-text
   "Enter text below to customize the
@@ -18,28 +19,19 @@ intro message on the homescreen")
 (def intro-placeholder
   "Everything you need to cast a ballot in your next election.")
 
-(defn input-area [current-value max-length event textarea-config]
-  (let [diff (- max-length (count @current-value))
-        border (when (neg? diff)
-                 {:class "border-danger"})
-        countdown-color (when (neg? diff)
-                          {:class "text-danger"})
-        change-fn (fn [evt]
-                    (let [val (.. evt -target -value)]
-                      (reset! current-value val)
-                      (when (>= (- max-length (count val)) 0)
-                        (re-frame/dispatch [event val]))))]
+(defn input-area [component-state max-length event textarea-config]
+  (let [current-value @component-state
+        diff (- max-length (count current-value))
+        border (shared/border-class diff)
+        change-fn (shared/max-length-change-fn
+                   max-length component-state [event])]
     [:div
      [:textarea.w-100 (merge textarea-config
-                             (when-let [val @current-value]
-                               {:value val})
-                             (when border
-                               border)
+                             (when current-value
+                               {:value current-value})
+                             border
                              {:on-change change-fn})]
-     [:p.small countdown-color
-      (if (>= diff 0)
-        (str "(" diff " characters remaining)")
-        (str "(" (Math/abs diff) " characters over)"))]]))
+     [shared/countdown diff]]))
 
 (defn customizer
   []
