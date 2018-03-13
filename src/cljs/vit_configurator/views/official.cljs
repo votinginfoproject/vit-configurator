@@ -8,22 +8,22 @@
   "Do you want to return only official state data
 from the Google Civic Information API?")
 
+(defn radio-button [value current-value]
+  (letfn [(change-fn [_]
+            (re-frame/dispatch [::events/set-official-data-only
+                                value]))]
+    [:input (merge {:type "radio" :name "official" :value (str value)
+                    :on-change change-fn}
+                   (if (= value current-value)
+                     {:checked true}
+                     {:checked false}))]))
+
 (defn customizer
   []
   (let [official @(re-frame/subscribe [::subs/official-data-only])]
     [:div
      [:p.mb-1 official-text]
-     [:input (merge {:type "radio" :name "official" :value "true"
-                     :on-change #(re-frame/dispatch
-                                  [::events/set-official-data-only true])}
-                    (if (= true official)
-                      {:checked true}
-                      {:checked false}))]
+     [radio-button true official]
      [:label.pl-1.pr-4 "Yes"]
-     [:input (merge {:type "radio" :name "official" :value "false"
-                     :on-change #(re-frame/dispatch
-                                  [::events/set-official-data-only false])}
-                    (if (= false official)
-                      {:checked true}
-                      {:checked false}))]
+     [radio-button false official]
      [:label.pl-1 "No"]]))
