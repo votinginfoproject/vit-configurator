@@ -21,7 +21,7 @@
    [:in "Indiana" "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Indiana-StateSeal.svg/240px-Indiana-StateSeal.svg.png"]
    [:io "Iowa" "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Iowa-StateSeal.svg/238px-Iowa-StateSeal.svg.png"]
    [:ka "Kansas" "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Seal_of_Kansas.svg/240px-Seal_of_Kansas.svg.png"]
-   [:kt "Kentucky" "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Seal_of_Kentucky.svg/240px-Seal_of_Kentucky.svg.png"]
+   [:ky "Kentucky" "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Seal_of_Kentucky.svg/240px-Seal_of_Kentucky.svg.png"]
    [:la "Louisiana" "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Seal_of_Louisiana.svg/240px-Seal_of_Louisiana.svg.png"]
    [:me "Maine" "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Seal_of_Maine.svg/240px-Seal_of_Maine.svg.png"]
    [:md "Maryland" "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Seal_of_Maryland_%28obverse%29.png/240px-Seal_of_Maryland_%28obverse%29.png"]
@@ -64,6 +64,74 @@
   [:option {:value abbreviation
             :key (name abbreviation)} state-name])
 
+(defn state-seal
+  [type state-seal-value]
+  [:div.row.mb-3
+   [:div.col
+    [:h6.text-uppercase "State Seal"]
+    [:select
+     {:value @state-seal-value
+      :on-change (fn [selection]
+                   (let [abbrev (-> selection
+                                    (.. -target -value)
+                                    keyword)]
+                     (reset! state-seal-value abbrev)
+                     (when (= :state-seal type)
+                       (re-frame/dispatch [::events/set-logo :state-seal
+                                           abbrev]))))}
+     (map select-option seals)]
+    [:div.h-50 {:class (if (= :state-seal type)
+                         "border-active" "border")
+                :on-click #(re-frame/dispatch [::events/set-logo :state-seal
+                                               @state-seal-value])}
+     [:div.pt-2.pb-3
+      [:img.mx-auto.d-block.squared-logo
+       {:src (->> seals
+                  (filter #(= @state-seal-value (first %)))
+                  first
+                  last)}]]]]])
+
+(defn default-logo
+  [type]
+  [:div.col
+   [:h6.text-uppercase "Default"]
+   [:div.h-75 {:class (if (= :default type) "border-active" "border")
+               :on-click #(re-frame/dispatch [::events/set-logo :default])}
+    [:div.pt-2
+     [:img.mx-auto.d-block.vip-logo
+      {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]]])
+
+(defn no-logo
+  [type]
+  [:div.col
+   [:h6.text-uppercase "None"]
+   [:div.h-75 {:class (if (= :none type) "border-active" "border")
+               :on-click #(re-frame/dispatch [::events/set-logo :none])}
+    [:div.pt-2
+     [:img.mx-auto.d-block.squared-logo
+      {:src "images/circle-slash.png"}]]]])
+
+(defn custom-logo
+  [type custom-logo-value]
+  [:div.row.mx-1.mb-2.d-flex.flex-column.h-150-static
+   [:h6.text-uppercase "Url"]
+   [:input {:value @custom-logo-value
+            :type :text
+            :placeholder "https://your.server/img/logo.png"
+            :on-change (fn [evt]
+                         (let [val (.. evt -target -value)]
+                           (reset! custom-logo-value val)
+                           (when (= :custom type)
+                             (re-frame/dispatch
+                              [::events/set-logo :custom val]))))}]
+   [:div {:class (if (= :custom type)
+                   "border-active" "border")
+          :on-click #(re-frame/dispatch
+                      [::events/set-logo :custom @custom-logo-value])}
+    [:div.pt-2.pb-2.h-50-static
+     [:img.mx-auto.d-block.squared-logo
+      {:src @custom-logo-value}]]]])
+
 (defn customizer
   "The component local state (custom-logo-value) keeps track of the dirty
    state of the custom URL entry, and on blur that gets emitted as an event.
@@ -72,62 +140,10 @@
   (let [custom-logo-value (reagent/atom "")
         state-seal-value (reagent/atom :al)]
     (fn []
-      (let [{:keys [type value]} @(re-frame/subscribe [::subs/logo])]
+      (let [{:keys [type]} @(re-frame/subscribe [::subs/logo])]
         [:div.container.justify-space-between
          [:div.row.mb-4
-          [:div.col
-           [:h6.text-uppercase "Default"]
-           [:div.h-75 {:class (if (= :default type) "border-active" "border")
-                       :on-click #(re-frame/dispatch [::events/set-logo :default])}
-            [:div.pt-2
-             [:img.mx-auto.d-block.vip-logo
-              {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]]]
-          [:div.col
-           [:h6.text-uppercase "None"]
-           [:div.h-75 {:class (if (= :none type) "border-active" "border")
-                       :on-click #(re-frame/dispatch [::events/set-logo :none])}
-            [:div.pt-2
-             [:img.mx-auto.d-block.squared-logo
-              {:src "images/circle-slash.png"}]]]]]
-         [:div.row.mb-3
-          [:div.col
-           [:h6.text-uppercase "State Seal"]
-           [:select
-            {:value @state-seal-value
-             :on-change (fn [selection]
-                          (let [abbrev (-> selection
-                                           (.. -target -value)
-                                           keyword)]
-                            (reset! state-seal-value abbrev)
-                            (when (= :state-seal type)
-                              (re-frame/dispatch [::events/set-logo :state-seal
-                                                  abbrev]))))}
-            (map select-option seals)]
-           [:div.h-50 {:class (if (= :state-seal type)
-                                "border-active" "border")
-                       :on-click #(re-frame/dispatch [::events/set-logo :state-seal
-                                                      @state-seal-value])}
-            [:div.pt-2.pb-3
-             [:img.mx-auto.d-block.squared-logo
-              {:src (->> seals
-                         (filter #(= @state-seal-value (first %)))
-                         first
-                         last)}]]]]]
-         [:div.row.mx-1.mb-2.d-flex.flex-column.h-150-static
-          [:h6.text-uppercase "Url"]
-          [:input {:value @custom-logo-value
-                   :type :text
-                   :placeholder "https://your.server/img/logo.png"
-                   :on-change (fn [evt]
-                                (let [val (.. evt -target -value)]
-                                  (reset! custom-logo-value val)
-                                  (when (= :custom type)
-                                    (re-frame/dispatch
-                                     [::events/set-logo :custom val]))))}]
-          [:div {:class (if (= :custom type)
-                          "border-active" "border")
-                 :on-click #(re-frame/dispatch
-                             [::events/set-logo :custom @custom-logo-value])}
-           [:div.pt-2.pb-2.h-50-static
-            [:img.mx-auto.d-block.squared-logo
-             {:src @custom-logo-value}]]]]]))))
+          [default-logo type]
+          [no-logo type]]
+         [state-seal type state-seal-value]
+         [custom-logo type custom-logo-value]]))))
