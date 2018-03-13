@@ -6,7 +6,7 @@
   pull values from the db.
   e.g.
   (extract-path :foo)
-  (extract-path :foo :bar first"
+  (extract-path :foo :bar first)"
   [& path]
   (fn [db]
     (get-in db path nil)))
