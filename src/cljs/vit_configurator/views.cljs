@@ -26,13 +26,13 @@
       "<script src=\"js/compiled/app.js\"></script>\n"
       "<div id=\"_vit\" class=\"app-container\"></div>\n"
       "<script>gttp2.core.init(\"_vit\",{\n"
-      "\ttheme: " (pr-str theme) ",\n"
-      "\tlanguage: " (pr-str language) ",\n"
-      "\tofficial-only: " (pr-str official) ",\n"
-      "\tlinks: " (pr-str links) "});</script>"]]))
       "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
       "\t\"title\": " (.stringify js/JSON (clj->js {:en title})) ",\n"
       "\t\"intro\": " (.stringify js/JSON (clj->js {:en intro})) ",\n"
+      "\t\"theme\": " (.stringify js/JSON (str theme)) ",\n"
+      "\t\"language\": " (.stringify js/JSON (str language)) ",\n"
+      "\t\"official-only\": " (pr-str official) ",\n"
+      "\t\"links\": " (.stringify js/JSON (clj->js links)) "});</script>"]]))
 
 (defn open-card
   [title-str key-val content]
