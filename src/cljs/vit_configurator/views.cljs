@@ -26,13 +26,18 @@
       "<script src=\"js/compiled/app.js\"></script>\n"
       "<div id=\"_vit\" class=\"app-container\"></div>\n"
       "<script>gttp2.core.init(\"_vit\",{\n"
-      "\tlogo: " (pr-str logo) ",\n"
-      "\ttitle: " (pr-str title) ",\n"
-      "\tintro: " (pr-str intro) ",\n"
-      "\ttheme: " (pr-str theme) ",\n"
-      "\tlanguage: " (pr-str language) ",\n"
-      "\tofficial-only: " (pr-str official) ",\n"
-      "\tlinks: " (pr-str links) "});</script>"]]))
+      "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
+      (when (not (#{:default ""} title))
+        (str "\t\"title\": " (.stringify js/JSON (clj->js {"en" title})) ",\n"))
+      (when (not= :default intro)
+        (str "\t\"intro\": " (.stringify js/JSON (clj->js {"en" intro})) ",\n"))
+      (when (not= :default theme)
+        (str "\t\"theme\": " (.stringify js/JSON (str theme)) ",\n"))
+      "\t\"language\": " (.stringify js/JSON (str language)) ",\n"
+      "\t\"official-only\": " (pr-str official)
+      (when (seq links)
+        (str ",\n\t\"links\": " (.stringify js/JSON (clj->js {"en" links}))))
+      "\n});</script>"]]))
 
 (defn open-card
   [title-str key-val content]
