@@ -11,6 +11,4 @@ else
     exit 1
 fi
 
-./script/build
-
 aws s3 sync --delete target/output/public "$BUCKET"
