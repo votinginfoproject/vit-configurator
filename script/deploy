@@ -5,9 +5,7 @@ set -e
 if [ "$1" = "staging" ]; then
     BUCKET="s3://vit-configurator-staging.votinginfoproject.org/"
 elif [ "$1" = "prod" ]; then
-    # BUCKET="s3://TODO"
-    echo "Prod not deployable yet!"
-    exit 1
+    BUCKET="s3://vit-configurator-production.votinginfoproject.org/"
 else
     echo "Usage: $0 [staging|prod]"
     exit 1
