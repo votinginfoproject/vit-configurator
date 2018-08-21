@@ -11,4 +11,10 @@ else
     exit 1
 fi
 
+if [[ -z $CF_DISTRIBUTION_ID ]]; then
+    echo "The CloudFront Distribution ID (CF_DISTRIBUTION_ID) must be set."
+    exit 1
+fi
+
 aws s3 sync --delete target/output/public "$BUCKET"
+aws cloudfront create-invalidation --distribution-id $CF_DISTRIBUTION_ID --paths /*
