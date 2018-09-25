@@ -23,7 +23,8 @@
         links @(re-frame/subscribe [::subs/links])]
     [:pre.p-2.border.border-black
      [:code
-      "<script src=\"js/compiled/app.js\"></script>\n"
+      "<link rel=\"stylesheet\" type=\"test/css\" href=\"https://votinginfotool.votinginfoproject.org/css/compiled/site.css\"/>\n"
+      "<script src=\"https://votinginfotool.votinginfoproject.org/js/compiled/app.js\"></script>\n"
       "<div id=\"_vit\" class=\"app-container\"></div>\n"
       "<script>gttp2.core.init(\"_vit\",{\n"
       "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
