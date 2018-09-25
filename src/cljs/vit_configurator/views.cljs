@@ -33,9 +33,9 @@
       (when (not= :default intro)
         (str "\t\"intro\": " (.stringify js/JSON (clj->js {"en" intro})) ",\n"))
       (when (not= :default theme)
-        (str "\t\"theme\": " (.stringify js/JSON (str theme)) ",\n"))
-      "\t\"language\": " (.stringify js/JSON (str language)) ",\n"
-      "\t\"official-only\": " (pr-str official)
+        (str "\t\"theme\": " (.stringify js/JSON (clj->js (theme/config theme))) ",\n"))
+      "\t\"language\": " (.stringify js/JSON (name language)) ",\n"
+      "\t\"official-only\": " (.stringify js/JSON official)
       (when (seq links)
         (str ",\n\t\"links\": " (.stringify js/JSON (clj->js {"en" links}))))
       "\n});</script>"]]))
