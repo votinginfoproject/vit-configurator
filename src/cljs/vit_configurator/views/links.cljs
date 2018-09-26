@@ -42,17 +42,17 @@ in the Election Contact 'More Info' section.")
     [:div
      [:p links-text]
      [:div.row
-      [link-field :electionInfo "Election Information" election-info]
-      [link-field :electionRegistration "Registration Information"
+      [link-field :electionInfoUrl "Election Information" election-info]
+      [link-field :electionRegistrationUrl "Registration Information"
        election-registration]]
      [:div.row
-      [link-field :electionRegistrationConfirmation
+      [link-field :electionRegistrationConfirmationUrl
        "Registration Confirmation" confirmation]
-      [link-field :absenteeVotingInfo "Absentee Voting Information"
+      [link-field :absenteeVotingInfoUrl "Absentee Voting Information"
        absentee-voting]]
      [:div.row
-      [link-field :votingLocationFinder "Voting Location Finder"
+      [link-field :votingLocationFinderUrl "Voting Location Finder"
        voting-location]
-      [link-field :ballotInfo "Ballot Information" ballot-info]]
+      [link-field :ballotInfoUrl "Ballot Information" ballot-info]]
      [:div.row
-      [link-field :electionRules "Election Rules" election-rules]]]))
+      [link-field :electionRulesUrl "Election Rules" election-rules]]]))
