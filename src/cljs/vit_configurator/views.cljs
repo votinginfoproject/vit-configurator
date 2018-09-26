@@ -9,10 +9,7 @@
             [vit-configurator.views.official :as official]
             [vit-configurator.views.theme :as theme]))
 
-;;TODO I don't expect these are the actual ways to construct the initializer
-;;code, for one the script src is not right. But, until we are defining how
-;;these params are used in the gttp2 code, leaving this as a placeholder.
-;;Feel free to redo these parameters as needed.
+;; TODO Make the urls environment specific
 (defn code-snippet []
   (let [logo @(re-frame/subscribe [::subs/logo])
         title @(re-frame/subscribe [::subs/title])
@@ -23,7 +20,7 @@
         links @(re-frame/subscribe [::subs/links])]
     [:pre.p-2.border.border-black
      [:code
-      "<link rel=\"stylesheet\" type=\"test/css\" href=\"https://votinginfotool.votinginfoproject.org/css/compiled/site.css\"/>\n"
+      "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.votinginfoproject.org/css/compiled/site.css\"/>\n"
       "<script src=\"https://votinginfotool.votinginfoproject.org/js/compiled/app.js\"></script>\n"
       "<div id=\"_vit\" class=\"app-container\"></div>\n"
       "<script>gttp2.core.init(\"_vit\",{\n"
