@@ -76,9 +76,8 @@
                                     (.. -target -value)
                                     keyword)]
                      (reset! state-seal-value abbrev)
-                     (when (= :state-seal type)
-                       (re-frame/dispatch [::events/set-logo :state-seal
-                                           abbrev]))))}
+                     (re-frame/dispatch [::events/set-logo :state-seal
+                                         abbrev])))}
      (map select-option seals)]
     [:div.h-50 {:class (if (= :state-seal type)
                          "border-active" "border")
@@ -121,9 +120,8 @@
             :on-change (fn [evt]
                          (let [val (.. evt -target -value)]
                            (reset! custom-logo-value val)
-                           (when (= :custom type)
-                             (re-frame/dispatch
-                              [::events/set-logo :custom val]))))}]
+                           (re-frame/dispatch
+                            [::events/set-logo :custom val])))}]
    [:div {:class (if (= :custom type)
                    "border-active" "border")
           :on-click #(re-frame/dispatch
