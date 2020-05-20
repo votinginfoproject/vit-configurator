@@ -2,19 +2,14 @@
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [vit-configurator.subs :as subs]
-            [vit-configurator.views.homescreen :as homescreen]
             [vit-configurator.views.language :as language]
             [vit-configurator.views.links :as links]
             [vit-configurator.views.logo :as logo]
-            [vit-configurator.views.official :as official]
-            [vit-configurator.views.theme :as theme]))
+            [vit-configurator.views.official :as official]))
 
 ;; TODO Make the urls environment specific
 (defn code-snippet []
   (let [logo @(re-frame/subscribe [::subs/logo])
-        title @(re-frame/subscribe [::subs/title])
-        intro @(re-frame/subscribe [::subs/intro])
-        theme @(re-frame/subscribe [::subs/theme])
         language @(re-frame/subscribe [::subs/language])
         official @(re-frame/subscribe [::subs/official-data-only])
         links @(re-frame/subscribe [::subs/links])]
@@ -25,12 +20,6 @@
       "<div id=\"_vit\" class=\"app-container\"></div>\n"
       "<script>gttp2.core.init(\"_vit\",{\n"
       "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
-      (when (not (#{:default ""} title))
-        (str "\t\"title\": " (.stringify js/JSON (clj->js {"en" title})) ",\n"))
-      (when (not= :default intro)
-        (str "\t\"intro\": " (.stringify js/JSON (clj->js {"en" intro})) ",\n"))
-      (when (not= :default theme)
-        (str "\t\"theme\": " (.stringify js/JSON (clj->js (theme/config theme))) ",\n"))
       "\t\"language\": " (.stringify js/JSON (name language)) ",\n"
       "\t\"official-only\": " (.stringify js/JSON official)
       (when (seq links)
@@ -40,7 +29,7 @@
 (defn open-card
   [title-str key-val content]
   [:div.card.ml-3.mr-3.mb-2.pb-0 {:key (gensym key-val)
-                                  :style {"box-shadow" "4px 4px grey"}}
+                                  :style {"boxShadow" "4px 4px grey"}}
    [:div.card-body.pb-0
     [:p.card-title.text-secondary.font-weight-bold
      [:span title-str]]
@@ -54,7 +43,7 @@
     ;;so we ignore the parameter in the render function below /shrug
     (fn [title-str key-val _ content]
       [:div.card.ml-1.mr-1.mb-2.pb-0 {:key (gensym key-val)
-                                      :style {"box-shadow" "4px 4px grey"}}
+                                      :style {"boxShadow" "4px 4px grey"}}
        [:div.card-body.pb-0
         [:p.card-title.text-secondary.font-weight-bold
          [:span title-str]
@@ -68,8 +57,8 @@
 
 (defn main-panel []
   [:div.container
-   [:div.row.justify-content-start {:style {"box-shadow" "0px 4px 2px grey"
-                                            "margin-bottom" "4px"}}
+   [:div.row.justify-content-start {:style {"boxShadow" "0px 4px 2px grey"
+                                            "marginBottom" "4px"}}
     [:div.col-1 [:img {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]
     [:div.col-6
      [:h6.text-uppercase "Voting Information Project"]
@@ -88,8 +77,6 @@
       " such as \"Don't forget to vote on Election Day!\", or by modifying"
       " the colors."]
      [card "Logo" :logo false [logo/customizer]]
-     [card "Homescreen text" :title true [homescreen/customizer]]
-     [card "Color theme" :themes true [theme/customizer]]
      [card "Language" :language true [language/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
      [card "Custom Election Info links" :links true [links/customizer]]]
