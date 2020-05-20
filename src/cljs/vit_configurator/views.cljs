@@ -80,9 +80,11 @@
      [card "Language" :language true [language/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
      [card "Custom Election Info links" :links true [links/customizer]]]
-    [:div.col-7.d-flex.flex-column
-     [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
-     [:div.container.d-flex.justify-content-center.pb-3
-      [:img {:src "./images/responsive-mockup.jpeg"}]]
-     [open-card "Your custom embed code" :embed
-      [code-snippet]]]]])
+    (let [preview-config @(re-frame/subscribe [::subs/visual-config])]
+      [:div.col-7.d-flex.flex-column
+       [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
+       [:div.container.d-flex.justify-content-center.pb-3
+        [:a {:href (str "/preview.html?config=" preview-config)
+             :target "_blank"} "Open Preview"]]
+       [open-card "Your custom embed code" :embed
+        [code-snippet]]])]])

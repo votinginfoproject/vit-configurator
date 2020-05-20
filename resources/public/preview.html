@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/compiled/site.css"></link>
+    <link rel="stylesheet" href="https://votinginfotool.votinginfoproject.org/css/compiled/vit.css"></link>
+    <script src="https://votinginfotool.org/js/compiled/app.js"></script>
+    <script src="js/compiled/configurator.js"></script>
+  </head>
+  <body>
+    <div id="_vit"></div>
+    <script>
+      var urlParams = new URLSearchParams(window.location.search);
+      var config = JSON.parse(urlParams.get('config'));
+      console.log("config: " + JSON.stringify(config))
+      vit.core.init("_vit", config);</script>
+  </body>
+</html>

@@ -15,3 +15,10 @@
 (re-frame/reg-sub ::language (extract :language))
 (re-frame/reg-sub ::official-data-only (extract :official-data-only))
 (re-frame/reg-sub ::links (extract :links))
+
+(defn visual-config
+  [db _]
+  (->> (select-keys db [:logo :language])
+       clj->js
+       (.stringify js/JSON)))
+(re-frame/reg-sub ::visual-config visual-config)
