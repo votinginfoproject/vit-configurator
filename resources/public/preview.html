@@ -13,6 +13,16 @@
     <script>
       var urlParams = new URLSearchParams(window.location.search);
       var config = JSON.parse(urlParams.get('config'));
+      var size = config["size"];
+      var tool = document.getElementById("_vit");
+      if (size == "responsive") {
+          tool.style.minWidth = "320px";
+	  tool.style.maxWidth = "640px";
+      } else if (size == "small") {
+	  tool.style.width = "320px";
+      } else {
+	  tool.style.width = "640px";
+      }
       console.log("config: " + JSON.stringify(config))
       vit.core.init("_vit", config);</script>
   </body>

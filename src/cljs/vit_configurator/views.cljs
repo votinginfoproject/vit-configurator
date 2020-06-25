@@ -5,26 +5,29 @@
             [vit-configurator.views.language :as language]
             [vit-configurator.views.links :as links]
             [vit-configurator.views.logo :as logo]
-            [vit-configurator.views.official :as official]))
+            [vit-configurator.views.official :as official]
+            [vit-configurator.views.size :as size]))
 
-;; TODO Make the urls environment specific
-(defn code-snippet []
-  (let [logo @(re-frame/subscribe [::subs/logo])
-        language @(re-frame/subscribe [::subs/language])
-        official @(re-frame/subscribe [::subs/official-data-only])
-        links @(re-frame/subscribe [::subs/links])]
-    [:pre.p-2.border.border-black
-     [:code
-      "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.votinginfoproject.org/css/compiled/site.css\"/>\n"
-      "<script src=\"https://votinginfotool.votinginfoproject.org/js/compiled/app.js\"></script>\n"
-      "<div id=\"_vit\" class=\"app-container\"></div>\n"
-      "<script>gttp2.core.init(\"_vit\",{\n"
-      "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
-      "\t\"language\": " (.stringify js/JSON (name language)) ",\n"
-      "\t\"official-only\": " (.stringify js/JSON official)
-      (when (seq links)
-        (str ",\n\t\"links\": " (.stringify js/JSON (clj->js {"en" links}))))
-      "\n});</script>"]]))
+(defn size-str [size]
+  (case size
+    :responsive "min-width: 320px, max-width: 640px"
+    :small "width: 320px"
+    :regular "width: 640px"))
+
+(defn code-snippet
+  [logo language official links size]
+  (str
+   "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.votinginfoproject.org/css/compiled/site.css\"/>\n"
+   "<script src=\"https://votinginfotool.votinginfoproject.org/js/compiled/app.js\"></script>\n"
+   (str "<div id=\"_vit\" style=\"" (size-str size) "\"></div>\n")
+   "<script>vit.core.init(\"_vit\",{\n"
+   "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
+   (when-not (= :none language)
+     (str "\t\"language\": " (.stringify js/JSON (name language)) ",\n"))
+   "\t\"official-only\": " (.stringify js/JSON official)
+   (when (seq links)
+     (str ",\n\t\"links\": " (.stringify js/JSON (clj->js {"en" links}))))
+   "\n});</script>"))
 
 (defn open-card
   [title-str key-val content]
@@ -54,6 +57,26 @@
          {:class (if @card-closed? "d-none" "d-block")}
          content]]])))
 
+(defn code-to-clipboard
+  "Code here cribbed from:
+  https://www.w3schools.com/howto/howto_js_copy_clipboard.asp.
+  The textarea is styled to be visible but placed off screen, because
+  you can't copy from a hidden element."
+  []
+  (let [codebox (. js/document getElementById "_vit_copy_code")]
+    (. codebox select)
+    (. codebox setSelectionRange 0 99999)
+    (. js/document execCommand "copy")
+    (js/alert "Copied")))
+
+(def mail-to-start
+  "mailto:email@address.com?subject=VIP%20Embed%20Code&body=")
+
+(defn mail-code
+  [code]
+  (let [encoded (.encodeURIComponent js/window code)
+        location (str mail-to-start encoded)]
+    (set! (.-location js/window) location)))
 
 (defn main-panel []
   [:div.container
@@ -73,18 +96,33 @@
       " can be embedded easily on any website and supports multiple languages."]
      [:p.pl-5.pr-5.pb-2
       "Using this widget you can easily customize the VIT by adding a"
-      " state seal or your organization's logo, including a custom alert,"
-      " such as \"Don't forget to vote on Election Day!\", or by modifying"
-      " the colors."]
+      " state seal or your organization's logo, setting a default language, "
+      " choosing whether to include unofficial data, or overriding the link "
+      " titles for Election Official links."]
      [card "Logo" :logo false [logo/customizer]]
      [card "Language" :language true [language/customizer]]
+     [card "Size" :size true [size/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
      [card "Custom Election Info links" :links true [links/customizer]]]
-    (let [preview-config @(re-frame/subscribe [::subs/visual-config])]
+    (let [config @(re-frame/subscribe [::subs/config])]
       [:div.col-7.d-flex.flex-column
        [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
        [:div.container.d-flex.justify-content-center.pb-3
-        [:a {:href (str "/preview.html?config=" preview-config)
+        [:a {:href (str "/preview.html?config=" config)
              :target "_blank"} "Open Preview"]]
-       [open-card "Your custom embed code" :embed
-        [code-snippet]]])]])
+       (let [logo      @(re-frame/subscribe [::subs/logo])
+             language  @(re-frame/subscribe [::subs/language])
+             official  @(re-frame/subscribe [::subs/official-data-only])
+             links     @(re-frame/subscribe [::subs/links])
+             size      @(re-frame/subscribe [::subs/size])
+             snippet   (code-snippet logo language official links size)]
+         [open-card "Your custom embed code" :embed
+          [:div
+           [:pre.p-2.border.border-black
+            [:code {:id "_vit_code"} snippet]]
+           [:textarea._vit_code_copy
+            {:id "_vit_copy_code"
+             :readOnly true
+             :value snippet}]
+           [:button {:on-click code-to-clipboard} "Copy to Clipboard"]
+           [:button {:on-click #(mail-code snippet)} "E-Mail Code"]]])])]])

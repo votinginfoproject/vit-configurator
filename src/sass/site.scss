@@ -34,7 +34,7 @@ i.toggle-card {
 }
 
 .border-active {
-    border: 2px solid black !important;
+    border: 2px solid #1390B7 !important;
 }
 
 .squared-logo {
@@ -61,4 +61,9 @@ i.toggle-card {
 
 .selected-border {
     border: 5px solid black;
+}
+
+._vit_code_copy {
+  position: absolute;
+  left: -1000%;
 }

@@ -4,8 +4,10 @@ set -e
 
 if [ "$1" = "staging" ]; then
     BUCKET="s3://vit-configurator-staging.votinginfoproject.org/"
+    CF_DISTRIBUTION_ID="E2BE40KNN4P0YJ"
 elif [ "$1" = "prod" ]; then
     BUCKET="s3://vit-configurator-production.votinginfoproject.org/"
+    CF_DISTRIBUTION_ID="E1BTG2A8LCM7ST"
 else
     echo "Usage: $0 [staging|prod]"
     exit 1
@@ -17,4 +19,4 @@ if [[ -z $CF_DISTRIBUTION_ID ]]; then
 fi
 
 aws s3 sync --delete target/output/public "$BUCKET"
-aws cloudfront create-invalidation --distribution-id $CF_DISTRIBUTION_ID --paths /*
+aws cloudfront create-invalidation --distribution-id $CF_DISTRIBUTION_ID --paths "/*"

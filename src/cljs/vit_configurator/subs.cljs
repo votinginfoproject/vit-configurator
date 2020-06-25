@@ -1,5 +1,6 @@
 (ns vit-configurator.subs
-  (:require [re-frame.core :as re-frame]))
+  (:require [clojure.string :as str]
+            [re-frame.core :as re-frame]))
 
 (defn extract
   "Takes vararg keywords/symbols that will form a keypath to
@@ -15,10 +16,11 @@
 (re-frame/reg-sub ::language (extract :language))
 (re-frame/reg-sub ::official-data-only (extract :official-data-only))
 (re-frame/reg-sub ::links (extract :links))
+(re-frame/reg-sub ::size :size)
 
-(defn visual-config
+(defn config
   [db _]
-  (->> (select-keys db [:logo :language])
+  (->> (select-keys db [:logo :language :size])
        clj->js
        (.stringify js/JSON)))
-(re-frame/reg-sub ::visual-config visual-config)
+(re-frame/reg-sub ::config config)

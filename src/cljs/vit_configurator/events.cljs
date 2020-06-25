@@ -28,3 +28,8 @@
  ::set-link-text
  (fn [db [_ link-kw text]]
    (assoc-in db [:links link-kw] text)))
+
+(re-frame/reg-event-db
+ ::set-size
+ (fn [db [_ size]]
+   (assoc db :size size)))
