@@ -5,4 +5,5 @@
    :language :none
    :official-data-only true
    :links {}
-   :size :responsive})
+   :size :responsive
+   :title "Voting Information Tool"})

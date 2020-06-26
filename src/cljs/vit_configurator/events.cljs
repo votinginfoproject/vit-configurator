@@ -15,6 +15,11 @@
      (assoc db :logo {:type type}))))
 
 (re-frame/reg-event-db
+ ::set-title
+ (fn [db [_ title]]
+   (assoc db :title title)))
+
+(re-frame/reg-event-db
  ::set-language
  (fn [db [_ lang]]
    (assoc db :language lang)))

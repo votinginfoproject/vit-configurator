@@ -12,6 +12,7 @@
   (fn [db]
     (get-in db path nil)))
 
+(re-frame/reg-sub ::title (extract :title))
 (re-frame/reg-sub ::logo (extract :logo))
 (re-frame/reg-sub ::language (extract :language))
 (re-frame/reg-sub ::official-data-only (extract :official-data-only))
