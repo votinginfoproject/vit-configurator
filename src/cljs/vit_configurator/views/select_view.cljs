@@ -23,7 +23,7 @@
     [:div
      [:p.mb-1 title-text]
      (when-not (str/blank? description-text)
-       [:p.mb-1.small description-text])
+       [:p.mb-1.small {:dangerouslySetInnerHTML {:__html description-text}}])
      [:select.mb-2 {:value current-val
                     :on-change (fn [selection]
                                  (let [new-val (-> selection
