@@ -1,5 +1,6 @@
 (ns vit-configurator.events
-  (:require [re-frame.core :as re-frame]
+  (:require [clojure.string :as str]
+            [re-frame.core :as re-frame]
             [vit-configurator.db :as db]))
 
 (re-frame/reg-event-db
@@ -32,7 +33,9 @@
 (re-frame/reg-event-db
  ::set-link-text
  (fn [db [_ link-kw text]]
-   (assoc-in db [:links link-kw] text)))
+   (if (str/blank? text)
+     (update db :links dissoc link-kw)
+     (assoc-in db [:links link-kw] text))))
 
 (re-frame/reg-event-db
  ::set-size
