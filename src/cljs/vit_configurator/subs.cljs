@@ -12,7 +12,7 @@
   (fn [db]
     (get-in db path nil)))
 
-(re-frame/reg-sub ::title (extract :title))
+(re-frame/reg-sub ::title (extract :title :en))
 (re-frame/reg-sub ::logo (extract :logo))
 (re-frame/reg-sub ::language (extract :language))
 (re-frame/reg-sub ::official-data-only (extract :official-data-only))
@@ -21,7 +21,7 @@
 
 (defn config
   [db _]
-  (->> (select-keys db [:logo :language :size])
+  (->> (select-keys db [:logo :language :size :title :links])
        clj->js
        (.stringify js/JSON)))
 (re-frame/reg-sub ::config config)

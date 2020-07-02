@@ -29,8 +29,9 @@
    (when-not (= :none language)
      (str "\t\"language\": " (.stringify js/JSON (name language)) ",\n"))
    "\t\"official-only\": " (.stringify js/JSON official)
-   (when (seq links)
-     (str ",\n\t\"links\": " (.stringify js/JSON (clj->js {"en" links}))))
+   (when (and (seq links)
+              (seq (:en links)))
+     (str ",\n\t\"links\": " (.stringify js/JSON (clj->js links))))
    "\n});</script>"))
 
 (defn open-card

@@ -5,6 +5,6 @@
    :logo {:type :default}
    :language :none
    :official-data-only true
-   :links {}
+   :links {:en {}}
    :size :responsive
-   :title "Voting Information Tool"})
+   :title {:en "Voting Information Tool"}})

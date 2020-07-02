@@ -19,7 +19,9 @@
 (re-frame/reg-event-db
  ::set-title
  (fn [db [_ title]]
-   (assoc db :title title)))
+   (if (str/blank? title)
+     (dissoc db :title)
+     (assoc-in db [:title :en] title))))
 
 (re-frame/reg-event-db
  ::set-language
@@ -35,8 +37,8 @@
  ::set-link-text
  (fn [db [_ link-kw text]]
    (if (str/blank? text)
-     (update db :links dissoc link-kw)
-     (assoc-in db [:links link-kw] text))))
+     (update-in db [:links :en] dissoc link-kw)
+     (assoc-in db [:links :en link-kw] text))))
 
 (re-frame/reg-event-db
  ::set-size
