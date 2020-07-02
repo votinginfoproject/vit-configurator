@@ -141,5 +141,6 @@
             {:id "_vit_copy_code"
              :readOnly true
              :value snippet}]
-           [:button {:on-click code-to-clipboard} "Copy to Clipboard"]
-           [:button {:on-click #(mail-code snippet)} "E-Mail Code"]]])])]])
+           [:div
+            [:button.btn.inline.left {:on-click code-to-clipboard} "Copy to Clipboard"]
+            [:button.btn.inline {:on-click #(mail-code snippet)} "E-Mail Code"]]]])])]])
