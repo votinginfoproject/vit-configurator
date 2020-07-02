@@ -1,7 +1,8 @@
 (ns vit-configurator.db)
 
 (def default-db
-  {:logo {:type :default}
+  {:preview-ready false
+   :logo {:type :default}
    :language :none
    :official-data-only true
    :links {}

@@ -1,7 +1,8 @@
 (ns vit-configurator.events
   (:require [clojure.string :as str]
             [re-frame.core :as re-frame]
-            [vit-configurator.db :as db]))
+            [vit-configurator.db :as db]
+            [vit-configurator.subs :as subs]))
 
 (re-frame/reg-event-db
  ::initialize-db
@@ -41,3 +42,28 @@
  ::set-size
  (fn [db [_ size]]
    (assoc db :size size)))
+
+(re-frame/reg-event-fx
+ ::preview-ready
+ (fn [{:keys [db]} [_ preview]]
+   {:db (-> db
+            (assoc :preview-ready true)
+            (assoc :preview-window preview))
+    :dispatch [::send-config (subs/config db nil)]}))
+
+(re-frame/reg-event-fx
+ ::send-config
+ (fn [{:keys [db]} [_ config]]
+   (when (:preview-ready db)
+     (let [preview-window (:preview-window db)
+           event (clj->js {"config" config})]
+       (.postMessage preview-window event)))
+   {:db db}))
+
+(re-frame/reg-event-db
+ ::reload-preview
+ (fn [db _]
+   (let [preview-window (:preview-window db)
+         location (.-location preview-window)]
+     (.reload location)
+     db)))

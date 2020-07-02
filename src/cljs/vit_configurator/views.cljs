@@ -1,6 +1,7 @@
 (ns vit-configurator.views
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
+            [vit-configurator.events :as events]
             [vit-configurator.subs :as subs]
             [vit-configurator.views.language :as language]
             [vit-configurator.views.links :as links]
@@ -81,6 +82,13 @@
         location (str mail-to-start encoded)]
     (set! (.-location js/window) location)))
 
+(defn preview-size [size]
+  (if (= size :small)
+    {:width "340px"
+     :height "480px"}
+    {:width "660px"
+     :height "480px"}))
+
 (defn main-panel []
   [:div.container
    [:div.row.justify-content-start {:style {"boxShadow" "0px 4px 2px grey"
@@ -90,9 +98,9 @@
      [:h6.text-uppercase "Voting Information Project"]
      [:h3 "Custom Widget Dashboard"]]]
    [:div.row.bg-light
-    [:div.col-5.d-flex.flex-column
+    [:div.col-4.d-flex.flex-column
      [:p.pt-5.pl-5.pr-5
-      [:strong "The Voting Information Tool"] "is an easily embeddable,"
+      [:strong "The Voting Information Tool"] " is an easily embeddable,"
       " mobile-optimized, white-label voting information tool that offers"
       " official voting information-such as polling place and ballot"
       " information-to anyone, using just a residential address. The tool"
@@ -108,12 +116,15 @@
      [card "Size" :size true [size/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
      [card "Custom Election Info links" :links true [links/customizer]]]
-    (let [config @(re-frame/subscribe [::subs/config])]
-      [:div.col-7.d-flex.flex-column
+    (let [config @(re-frame/subscribe [::subs/config])
+          size @(re-frame/subscribe [::subs/size])]
+      [:div.col-8.d-flex.flex-column
        [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
-       [:div.container.d-flex.justify-content-center.pb-3
-        [:a {:href (str "/preview.html?config=" config)
-             :target "_blank"} "Open Preview"]]
+       [:iframe#live_preview {:src "live-preview.html"
+                              :style (preview-size size)}]
+       [:div
+        [:button#reload_preview.btn {:on-click #(re-frame/dispatch [::events/reload-preview])}
+         "Reload Preview With Updated Configuration"]]
        (let [title     @(re-frame/subscribe [::subs/title])
              logo      @(re-frame/subscribe [::subs/logo])
              language  @(re-frame/subscribe [::subs/language])

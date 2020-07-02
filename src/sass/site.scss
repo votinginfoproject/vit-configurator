@@ -19,6 +19,14 @@ $border-radius:               0px;
 $border-radius-lg:            0px;
 $border-radius-sm:            0px;
 
+// theme colors from VIT
+$white:      #ffffff;
+$gray-100:   #eeeeee;
+$gray-200:   #F5F6F7;
+$gray-500:   #475A66;
+$blue-500:   #007AAA;
+$off-white:  #F9F9F9;
+
 @import "bootstrap/bootstrap";
 
 i.toggle-card {
@@ -66,4 +74,45 @@ i.toggle-card {
 ._vit_code_copy {
   position: absolute;
   left: -1000%;
+}
+
+#live_preview {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn {
+  background-color: $blue-500;
+  color: $white;
+  font-size: 16px;
+  display: block;
+  text-transform: uppercase;
+  font-weight: 300;
+  padding: 12px;
+  border-radius: 2px;
+  border: 0;
+
+  &:hover {
+    background-color: darken($blue-500, 3%);
+  }
+
+  @media screen and (max-width: 440px) {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+.inline {
+  display: inline-block;
+}
+
+.left {
+  margin-right: 1rem;
+}
+
+#reload_preview {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
 }
