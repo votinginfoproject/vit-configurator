@@ -79,11 +79,14 @@
     (js/alert "Copied")))
 
 (def mail-to-start
-  "mailto:email@address.com?subject=VIP%20Embed%20Code&body=")
+  "mailto:?subject=VIP%20Embed%20Code&body=")
+
+(def email-instructions
+  "Put the following code into your HTML page to install the configured Voting Info Tool widget. Please be aware that some email programs like Outlook might wrap the links with a redirection link that serves the actual content from a Microsoft site. This is not recommended. Check after pasting in the code that it reads just like it does in this email, and that the script src link and stylesheet href both start with \"https://votinginfotool.org\".\n\n")
 
 (defn mail-code
   [code]
-  (let [encoded (.encodeURIComponent js/window code)
+  (let [encoded (.encodeURIComponent js/window (str email-instructions code))
         location (str mail-to-start encoded)]
     (set! (.-location js/window) location)))
 
