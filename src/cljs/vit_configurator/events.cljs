@@ -24,6 +24,13 @@
      (assoc-in db [:title :en] title))))
 
 (re-frame/reg-event-db
+ ::set-alert
+ (fn [db [_ alert]]
+   (if (str/blank? alert)
+     (dissoc db :alert)
+     (assoc-in db [:alert :en] alert))))
+
+(re-frame/reg-event-db
  ::set-language
  (fn [db [_ lang]]
    (assoc db :language lang)))

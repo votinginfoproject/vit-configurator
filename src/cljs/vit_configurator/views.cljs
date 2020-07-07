@@ -1,8 +1,10 @@
 (ns vit-configurator.views
-  (:require [re-frame.core :as re-frame]
+  (:require [clojure.string :as str]
+            [re-frame.core :as re-frame]
             [reagent.core :as reagent]
             [vit-configurator.events :as events]
             [vit-configurator.subs :as subs]
+            [vit-configurator.views.alert :as alert]
             [vit-configurator.views.language :as language]
             [vit-configurator.views.links :as links]
             [vit-configurator.views.logo :as logo]
@@ -17,14 +19,16 @@
     :regular "width: 640px"))
 
 (defn code-snippet
-  [title logo language official links size]
+  [title logo language official links size alert]
   (str
-   "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.votinginfoproject.org/css/compiled/site.css\"/>\n"
-   "<script src=\"https://votinginfotool.votinginfoproject.org/js/compiled/app.js\"></script>\n"
+   "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.org/css/compiled/site.css\"/>\n"
+   "<script src=\"https://votinginfotool.org/js/compiled/app.js\"></script>\n"
    (str "<div id=\"_vit\" style=\"" (size-str size) "\"></div>\n")
    "<script>vit.core.init(\"_vit\",{\n"
-   (when-not (= "Voting Information Tool" title)
-     (str "\t\"title\": " (.stringify js/JSON (clj->js {"en" title})) ",\n"))
+   (when-not (str/blank? (:en title))
+     (str "\t\"title\": " (.stringify js/JSON (clj->js title)) ",\n"))
+   (when-not (str/blank? (:en alert))
+     (str "\t\"alert\": " (.stringify js/JSON (clj->js alert)) ",\n"))
    "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
    (when-not (= :none language)
      (str "\t\"language\": " (.stringify js/JSON (name language)) ",\n"))
@@ -113,6 +117,7 @@
       " titles for Election Official links."]
      [card "Logo" :logo false [logo/customizer]]
      [card "Title" :title true [title/customizer]]
+     [card "Alert" :alert true [alert/customizer]]
      [card "Language" :language true [language/customizer]]
      [card "Size" :size true [size/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
@@ -132,7 +137,8 @@
              official  @(re-frame/subscribe [::subs/official-data-only])
              links     @(re-frame/subscribe [::subs/links])
              size      @(re-frame/subscribe [::subs/size])
-             snippet   (code-snippet title logo language official links size)]
+             alert     @(re-frame/subscribe [::subs/alert])
+             snippet   (code-snippet title logo language official links size alert)]
          [open-card "Your custom embed code" :embed
           [:div
            [:pre.p-2.border.border-black
