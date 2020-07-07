@@ -129,11 +129,12 @@
           size @(re-frame/subscribe [::subs/size])]
       [:div.col-8.d-flex.flex-column
        [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
-       [:iframe#live_preview {:src "live-preview.html"
-                              :style (preview-size size)}]
+       [:p "You can preview your configuration changes in the sample tool below. Just make your changes and then click on the Reload Preview button to load them into the sample tool. If you've made Alert or Custom Link changes, you should type \":preview\" into the address field and click on the Search button in order to see those in mocked results."]
        [:div
         [:button#reload_preview.btn {:on-click #(re-frame/dispatch [::events/reload-preview])}
-         "Reload Preview With Updated Configuration"]]
+         "Reload Preview"]]
+       [:iframe#live_preview {:src "live-preview.html"
+                              :style (preview-size size)}]
        (let [title     @(re-frame/subscribe [::subs/title])
              logo      @(re-frame/subscribe [::subs/logo])
              language  @(re-frame/subscribe [::subs/language])
