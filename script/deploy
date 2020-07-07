@@ -18,5 +18,22 @@ if [[ -z $CF_DISTRIBUTION_ID ]]; then
     exit 1
 fi
 
+# if we are working within a buildkite-agent context, then we'll pull
+# the build from an artifact file. Otherwise we want to assume the
+# build is in ./target/output by default for local deploys.
+
+if hash buildkite-agent 2>/dev/null ; then
+  OUTPUT_DIR=./target/output
+  rm -rf $OUTPUT_DIR
+
+  # Pull down the specific build artifact for this $TARGET_ENV and
+  # unpack it into the current `target/output` directory, ensuring we
+  # aren't using the wrong build for this env/deploy target.
+  BUILD_ARTIFACT="vit-configurator.tar.gz"
+  buildkite-agent artifact download $BUILD_ARTIFACT .
+  tar -zxvf $BUILD_ARTIFACT
+fi
+
+
 aws s3 sync --delete target/output/public "$BUCKET"
 aws cloudfront create-invalidation --distribution-id $CF_DISTRIBUTION_ID --paths "/*"

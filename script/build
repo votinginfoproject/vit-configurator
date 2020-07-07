@@ -14,3 +14,13 @@ docker run \
        --name $DOCKER_CONTAINER $DOCKER_TAG
 docker cp $DOCKER_CONTAINER:$DOCKER_WORKDIR/$ASSET_DIR $OUTPUT_DIR
 docker rm $DOCKER_CONTAINER
+
+# for buildkite builds vs. local
+
+if hash buildkite-agent 2>/dev/null ; then
+  # Upload this build artifact so we can pull down the correct build for
+  # the given $TARGET_ENV in the deploy stage
+  BUILD_ARTIFACT="vit-configurator.tar.gz"
+  tar -zcvf $BUILD_ARTIFACT $OUTPUT_DIR
+  buildkite-agent artifact upload $BUILD_ARTIFACT
+fi
