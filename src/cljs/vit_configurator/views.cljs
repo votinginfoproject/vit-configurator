@@ -92,9 +92,9 @@
 
 (defn preview-size [size]
   (if (= size :small)
-    {:width "340px"
+    {:width "400px"
      :height "480px"}
-    {:width "660px"
+    {:width "700px"
      :height "480px"}))
 
 (defn main-panel []
