@@ -5,9 +5,9 @@
 
 (defn customizer
   []
-  (let [title @(re-frame/subscribe [::subs/title])]
+  (let [title (:en @(re-frame/subscribe [::subs/title]))]
     [:div
-     [:p.mb-1 "Change the title of the Voting Information Tool"]
+     [:p.mb-1 "Provide a title for the Voting Information Tool"]
      [:input {:type "text" :name "title" :value title
               :on-change (fn [evt]
                            (let [val (.. evt -target -value)]
