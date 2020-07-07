@@ -120,7 +120,7 @@
       " titles for Election Official links."]
      [card "Logo" :logo false [logo/customizer]]
      [card "Title" :title true [title/customizer]]
-     [card "Alert" :alert true [alert/customizer]]
+     [card "Pre-results Message" :alert true [alert/customizer]]
      [card "Language" :language true [language/customizer]]
      [card "Size" :size true [size/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
