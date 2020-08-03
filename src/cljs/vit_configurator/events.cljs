@@ -21,14 +21,14 @@
  (fn [db [_ title]]
    (if (str/blank? title)
      (dissoc db :title)
-     (assoc-in db [:title :en] title))))
+     (assoc db :title title))))
 
 (re-frame/reg-event-db
- ::set-alert
- (fn [db [_ alert]]
-   (if (str/blank? alert)
-     (dissoc db :alert)
-     (assoc-in db [:alert :en] alert))))
+ ::set-voter-info
+ (fn [db [_ voter-info]]
+   (if (str/blank? voter-info)
+     (dissoc db :voter-info)
+     (assoc db :voter-info voter-info))))
 
 (re-frame/reg-event-db
  ::set-language
@@ -36,16 +36,16 @@
    (assoc db :language lang)))
 
 (re-frame/reg-event-db
- ::set-official-data-only
+ ::set-official-only
  (fn [db [_ official]]
-   (assoc db :official-data-only official)))
+   (assoc db :official-only official)))
 
 (re-frame/reg-event-db
  ::set-link-text
  (fn [db [_ link-kw text]]
    (if (str/blank? text)
-     (update-in db [:links :en] dissoc link-kw)
-     (assoc-in db [:links :en link-kw] text))))
+     (update db :links dissoc link-kw)
+     (assoc-in db [:links link-kw] text))))
 
 (re-frame/reg-event-db
  ::set-size
@@ -58,14 +58,16 @@
    {:db (-> db
             (assoc :preview-ready true)
             (assoc :preview-window preview))
-    :dispatch [::send-config (subs/config db nil)]}))
+    :dispatch [::send-config]}))
 
 (re-frame/reg-event-fx
  ::send-config
- (fn [{:keys [db]} [_ config]]
+ (fn [{:keys [db]} _]
    (when (:preview-ready db)
      (let [preview-window (:preview-window db)
-           event (clj->js {"config" config})]
+           config (:config db)
+           desktop-config (merge config {:display-mode "desktop"})
+           event (clj->js {"config" desktop-config})]
        (.postMessage preview-window event)))
    {:db db}))
 
@@ -76,3 +78,26 @@
          location (.-location preview-window)]
      (.reload location)
      db)))
+
+(defn add-language-code
+  [m k]
+  (if-let [v (get m k nil)]
+    (-> m
+        (dissoc k)
+        (assoc-in (concat [k] [:en]) v))
+    m))
+
+(defn clj-config
+  [db]
+  (as->
+      (select-keys db [:logo :language :size :title :links :voter-info :official-only]) $
+      (add-language-code $ :title)
+      (add-language-code $ :voter-info)
+      (add-language-code $ :links)))
+
+(defn save-config-and-reload-preview
+  [{:keys [db]} _]
+  {:db (assoc db :config (clj-config db))
+   :dispatch [::reload-preview]})
+
+(re-frame/reg-event-fx ::save-config-and-reload-preview save-config-and-reload-preview)

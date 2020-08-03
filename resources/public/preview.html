@@ -2,28 +2,20 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="css/compiled/site.css"></link>
-    <link rel="stylesheet" href="https://votinginfotool.votinginfoproject.org/css/compiled/vit.css"></link>
-    <script src="https://votinginfotool.org/js/compiled/app.js"></script>
-    <script src="js/compiled/configurator.js"></script>
-  </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  </head>
   <body>
+    <link rel="stylesheet" href="https://preview.votinginfotool.org/css/compiled/vit.css"></link>
+    <script src="https://preview.votinginfotool.org/js/compiled/app.js"></script>
     <div id="_vit"></div>
     <script>
-      var urlParams = new URLSearchParams(window.location.search);
-      var config = JSON.parse(urlParams.get('config'));
-      var size = config["size"];
-      var tool = document.getElementById("_vit");
-      if (size == "responsive") {
-          tool.style.minWidth = "320px";
-	  tool.style.maxWidth = "640px";
-      } else if (size == "small") {
-	  tool.style.width = "320px";
-      } else {
-	  tool.style.width = "640px";
-      }
-      console.log("config: " + JSON.stringify(config))
-      vit.core.init("_vit", config);</script>
+      var config = {"title": {"en": "Hello World"}};
+      var loadVIT = function () {
+	  if (typeof vit !== 'undefined') {
+	    vit.core.init("_vit", config);
+	  } else {
+	    setTimeout(loadVIT, 5000);
+	  }
+      };
+      loadVIT(); </script>
   </body>
 </html>

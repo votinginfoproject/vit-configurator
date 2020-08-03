@@ -2,7 +2,9 @@
 
 (def default-db
   {:preview-ready false
+   :official-only true
    :logo {:type :default}
-   :language :none
-   :official-data-only true
-   :size :responsive})
+   :size :responsive
+   :config {:logo {:type :default}
+            :official-only true
+            :size :responsive}})

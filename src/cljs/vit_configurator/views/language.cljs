@@ -7,7 +7,18 @@
 (def languages
   [[:none "Not Specified"]
    [:en "English"]
-   [:es "Spanish"]])
+   [:es "Spanish"]
+   [:ja "Japanese"]
+   [:hy "Armenian"]
+   [:zh "Chinese" ]
+   [:fa "Farsi"]
+   [:hi "Hindi"]
+   [:km "Khmer"]
+   [:ko "Korean"]
+   [:ru "Russian"]
+   [:tl "Tagalog"]
+   [:th "Thai"]
+   [:vi "Vietnamese"]])
 
 (defn customizer
   []

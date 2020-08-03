@@ -4,7 +4,7 @@
             [reagent.core :as reagent]
             [vit-configurator.events :as events]
             [vit-configurator.subs :as subs]
-            [vit-configurator.views.alert :as alert]
+            [vit-configurator.views.voter-info :as vi]
             [vit-configurator.views.language :as language]
             [vit-configurator.views.links :as links]
             [vit-configurator.views.logo :as logo]
@@ -16,27 +16,37 @@
   (case size
     :responsive "min-width: 320px, max-width: 640px"
     :small "width: 320px"
-    :regular "width: 640px"))
+    :regular "width: 640px"
+    "min-width: 320px, max-width: 640px"))
 
 (defn code-snippet
-  [title logo language official links size alert]
+  [{:keys [title logo language official-only links size voter-info]}]
   (str
    "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.org/css/compiled/site.css\"/>\n"
    "<script src=\"https://votinginfotool.org/js/compiled/app.js\"></script>\n"
    (str "<div id=\"_vit\" style=\"" (size-str size) "\"></div>\n")
-   "<script>vit.core.init(\"_vit\",{\n"
+   "<script>\n"
+   "  var config = {\n"
    (when-not (str/blank? (:en title))
-     (str "\t\"title\": " (.stringify js/JSON (clj->js title)) ",\n"))
-   (when-not (str/blank? (:en alert))
-     (str "\t\"alert\": " (.stringify js/JSON (clj->js alert)) ",\n"))
-   "\t\"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
-   (when-not (= :none language)
-     (str "\t\"language\": " (.stringify js/JSON (name language)) ",\n"))
-   "\t\"official-only\": " (.stringify js/JSON official)
-   (when (and (seq links)
-              (seq (:en links)))
-     (str ",\n\t\"links\": " (.stringify js/JSON (clj->js links))))
-   "\n});</script>"))
+     (str "    \"title\": " (.stringify js/JSON (clj->js title)) ",\n"))
+   (when-not (str/blank? (:en voter-info))
+     (str "    \"voter-info\": " (.stringify js/JSON (clj->js voter-info)) ",\n"))
+   "    \"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
+   (when language
+     (str "    \"language\": " (.stringify js/JSON (name language)) ",\n"))
+   "    \"official-only\": " (.stringify js/JSON official-only)
+   (when (seq links)
+     (str ",\n    \"links\": " (.stringify js/JSON (clj->js links))))
+   "\n  };\n"
+   "  var loadVIT = function () {\n"
+   "    if (typeof vit !== 'undefined'){\n"
+   "      vit.core.init(\"_vit\", config);\n"
+   "    } else {\n"
+   "      setTimeout(loadVIT, 500);\n"
+   "    };\n"
+   "  };\n"
+   "  loadVIT();\n"
+   "</script>"))
 
 (defn open-card
   [title-str key-val content]
@@ -82,7 +92,7 @@
   "mailto:?subject=VIP%20Embed%20Code&body=")
 
 (def email-instructions
-  "Put the following code into your HTML page to install the configured Voting Info Tool widget. Please be aware that some email programs like Outlook might wrap the links with a redirection link that serves the actual content from a Microsoft site. This is not recommended. Check after pasting in the code that it reads just like it does in this email, and that the script src link and stylesheet href both start with \"https://votinginfotool.org\".\n\n")
+  "Put the following code into your HTML page to install the configured Voting Info Tool widget. It will need to be placed into the page at the place you want it to show up, ask your website maintainer for help if needed. Please be aware that some email programs like Outlook might wrap the links with a redirection link that serves the actual content from a Microsoft site. This is not recommended. Check after pasting in the code that it reads just like it does in this email, and that the script src link and stylesheet href both start with \"https://votinginfotool.org\".\n\n")
 
 (defn mail-code
   [code]
@@ -97,6 +107,23 @@
     {:width "700px"
      :height "480px"}))
 
+(defn code
+  []
+  (let [clj-config @(re-frame/subscribe [::subs/clj-config])
+        snippet   (code-snippet clj-config)]
+    [open-card "Your custom embed code" :embed
+     [:div
+      [:p "The box below contains your custom embed code. You'll need to copy all the contents, and put them in the HTML page where you want the Voter Information Tool to show up. You can copy the contents automatically using the Copy to Clipboard button, and then paste them into your page directly, or send them on to your website maintainer. Alternatively, you can also use the E-mail Code button to bring up a new email in your default email program with the code already included, and just fill in the receiver address with either your own address or your website maintainer."]
+      [:pre.p-2.border.border-black
+       [:code {:id "_vit_code"} snippet]]
+      [:textarea._vit_code_copy
+       {:id "_vit_copy_code"
+        :readOnly true
+        :value snippet}]
+      [:div
+       [:button.btn.inline.left {:on-click code-to-clipboard} "Copy to Clipboard"]
+       [:button.btn.inline {:on-click #(mail-code snippet)} "E-Mail Code"]]]]))
+
 (defn main-panel []
   [:div.container
    [:div.row.justify-content-start {:style {"boxShadow" "0px 4px 2px grey"
@@ -104,7 +131,7 @@
     [:div.col-1 [:img {:src "https://dashboard.votinginfoproject.org/assets/images/logo-vip.png"}]]
     [:div.col-6
      [:h6.text-uppercase "Voting Information Project"]
-     [:h3 "Custom Widget Dashboard"]]]
+     [:h3 "VIT Configurator Dashboard"]]]
    [:div.row.bg-light
     [:div.col-4.d-flex.flex-column
      [:p.pt-5.pl-5.pr-5
@@ -118,39 +145,25 @@
       " state seal or your organization's logo, setting a default language, "
       " choosing whether to include unofficial data, or overriding the link "
       " titles for Election Official links."]
+     [:div
+        [:button.reload_preview.btn
+         {:on-click #(re-frame/dispatch [::events/save-config-and-reload-preview])}
+         "Save and Preview Configuration"]]
      [card "Logo" :logo false [logo/customizer]]
      [card "Title" :title true [title/customizer]]
-     [card "Pre-results Message" :alert true [alert/customizer]]
+     [card "Voter Information Message" :voter-info true [vi/customizer]]
      [card "Language" :language true [language/customizer]]
      [card "Size" :size true [size/customizer]]
      [card "Official data use" :official-data true [official/customizer]]
-     [card "Custom Election Info links" :links true [links/customizer]]]
-    (let [config @(re-frame/subscribe [::subs/config])
-          size @(re-frame/subscribe [::subs/size])]
+     [card "Custom Election Info links" :links true [links/customizer]]
+     [:div
+        [:button.reload_preview.btn
+         {:on-click #(re-frame/dispatch [::events/save-config-and-reload-preview])}
+         "Save and Preview Configuration"]]]
+    (let [size   (:size @(re-frame/subscribe [::subs/clj-config]))]
       [:div.col-8.d-flex.flex-column
        [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
-       [:p "You can preview your configuration changes in the sample tool below. Just make your changes and then click on the Reload Preview button to load them into the sample tool. If you've made Alert or Custom Link changes, you should type \":preview\" into the address field and click on the Search button in order to see those in mocked results."]
-       [:div
-        [:button#reload_preview.btn {:on-click #(re-frame/dispatch [::events/reload-preview])}
-         "Reload Preview"]]
+       [:p "You can preview your configuration changes in the sample tool below. Just make your changes in the left hand side and then click any of the \"Save and Preview Configuration\" buttons to load the changes into the sample tool below. If you've made Voter Information Message or Custom Link changes, you should type \":preview\" into the address field and click on the Search button in order to see those in mocked results. Voter Information Messages appear after a search but before results, and custom link texts appear on the Contact Info tab."]
        [:iframe#live_preview {:src "live-preview.html"
                               :style (preview-size size)}]
-       (let [title     @(re-frame/subscribe [::subs/title])
-             logo      @(re-frame/subscribe [::subs/logo])
-             language  @(re-frame/subscribe [::subs/language])
-             official  @(re-frame/subscribe [::subs/official-data-only])
-             links     @(re-frame/subscribe [::subs/links])
-             size      @(re-frame/subscribe [::subs/size])
-             alert     @(re-frame/subscribe [::subs/alert])
-             snippet   (code-snippet title logo language official links size alert)]
-         [open-card "Your custom embed code" :embed
-          [:div
-           [:pre.p-2.border.border-black
-            [:code {:id "_vit_code"} snippet]]
-           [:textarea._vit_code_copy
-            {:id "_vit_copy_code"
-             :readOnly true
-             :value snippet}]
-           [:div
-            [:button.btn.inline.left {:on-click code-to-clipboard} "Copy to Clipboard"]
-            [:button.btn.inline {:on-click #(mail-code snippet)} "E-Mail Code"]]]])])]])
+       [code]])]])

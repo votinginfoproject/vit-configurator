@@ -5,10 +5,11 @@
 
 (defn customizer
   []
-  (let [title (:en @(re-frame/subscribe [::subs/title]))]
+  (let [title @(re-frame/subscribe [::subs/title])]
+    (println "title is: " title)
     [:div
-     [:p.mb-1 "Provide a title for the Voting Information Tool"]
-     [:input {:type "text" :name "title" :value title
+     [:p.mb-2 "Provide a title for the Voting Information Tool"]
+     [:input {:type "text" :name "title" :value (or title "")
               :on-change (fn [evt]
                            (let [val (.. evt -target -value)]
                              (re-frame/dispatch [::events/set-title val])))}]]))

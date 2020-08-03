@@ -12,7 +12,7 @@
       var handleEvent = function(event) {
 	  console.log(event);
 	  if (event.data.config) {
-	      var config = JSON.parse(event.data.config);
+	      var config = event.data.config;
 	      vit.core.init("_vit", config);
 	      console.log(config);
 	      var tool = document.getElementById("_vit");

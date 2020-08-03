@@ -17,11 +17,12 @@ in the Election Contact 'More Info' section.")
         change-fn (shared/max-length-change-fn
                    max-length component-state [::events/set-link-text link-kw])]
     [:div.col
-     [:div default-text]
+     [:p.mb-2 default-text]
      [:input.w-100 (merge (when current-value
                             {:value current-value})
                           border
                           {:on-change change-fn
+                           :max-length 45
                            :type "text"
                            :key (str link-kw "-input")
                            :placeholder default-text})]

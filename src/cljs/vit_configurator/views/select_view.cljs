@@ -21,14 +21,16 @@
   [{:keys [title-text description-text subscription event-kw options]}]
   (let [current-val @subscription]
     [:div
-     [:p.mb-1 title-text]
+     [:p.mb-2 title-text]
      (when-not (str/blank? description-text)
        [:p.mb-1.small {:dangerouslySetInnerHTML {:__html description-text}}])
-     [:select.mb-2 {:value current-val
-                    :on-change (fn [selection]
-                                 (let [new-val (-> selection
-                                                   (.. -target -value)
-                                                   keyword)]
-                                   (re-frame/dispatch
-                                    [event-kw new-val])))}
+     [:select.mb-2 (merge
+                    (when current-val
+                      {:value current-val})
+                    {:on-change (fn [selection]
+                                  (let [new-val (-> selection
+                                                    (.. -target -value)
+                                                    keyword)]
+                                    (re-frame/dispatch
+                                     [event-kw new-val])))})
       (map option options)]]))
