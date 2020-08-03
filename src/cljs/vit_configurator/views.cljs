@@ -148,7 +148,7 @@
      [:div
         [:button.reload_preview.btn
          {:on-click #(re-frame/dispatch [::events/save-config-and-reload-preview])}
-         "Save and Preview Configuration"]]
+         "Save and Update Configuration"]]
      [card "Logo" :logo false [logo/customizer]]
      [card "Title" :title true [title/customizer]]
      [card "Voter Information Message" :voter-info true [vi/customizer]]
@@ -159,11 +159,11 @@
      [:div
         [:button.reload_preview.btn
          {:on-click #(re-frame/dispatch [::events/save-config-and-reload-preview])}
-         "Save and Preview Configuration"]]]
+         "Save and Update Configuration"]]]
     (let [size   (:size @(re-frame/subscribe [::subs/clj-config]))]
       [:div.col-8.d-flex.flex-column
        [:div.container.d-flex.justify-content-center [:h4.pt-4 "Preview"]]
-       [:p "You can preview your configuration changes in the sample tool below. Just make your changes in the left hand side and then click any of the \"Save and Preview Configuration\" buttons to load the changes into the sample tool below. If you've made Voter Information Message or Custom Link changes, you should type \":preview\" into the address field and click on the Search button in order to see those in mocked results. Voter Information Messages appear after a search but before results, and custom link texts appear on the Contact Info tab."]
+       [:p "You can preview your configuration changes in the sample tool below. Just make your changes in the left hand side and then click any of the \"Save and Preview Configuration\" buttons to load the changes into the sample tool and code block below. " [:i "If you've made " [:strong "Voter Information Message"] " or " [:strong "Custom Link"] " changes, you should type " [:strong ":preview"] " into the address field and click on the Search button in order to see those in mocked results."] " Voter Information Messages appear after a search but before results, and custom link texts appear on the Contact Info tab."]
        [:iframe#live_preview {:src "live-preview.html"
                               :style (preview-size size)}]
        [code]])]])
