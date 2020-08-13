@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://preview.votinginfotool.org/css/compiled/vit.css"></link>
+    <script src="https://preview.votinginfotool.org/js/compiled/app.js"></script>
+  </head>
+  <body>
+    <div id="_vit"></div>
+    <script>
+      var handleEvent = function(event) {
+	  console.log(event);
+	  if (event.data.config) {
+	      var config = event.data.config;
+	      vit.core.init("_vit", config);
+	      console.log(config);
+	      var tool = document.getElementById("_vit");
+	      if (config.size === "responsive") {
+		  tool.style.minWidth = "320px";
+		  tool.style.maxWidth = "640px";
+	      } else if (config.size === "small") {
+		  tool.style.width = "320px";
+	      } else {
+		  tool.style.width = "640px";
+	      }
+	  }
+      }
+      window.addEventListener('message', handleEvent);
+
+      window.parent.postMessage("ready");
+      console.log("sent handshake");
+    </script>
+  </body>
+</html>

@@ -9,7 +9,7 @@
   "Change the text for the links that appear
 in the Election Contact 'More Info' section.")
 
-(defn link-field [link-kw placeholder component-state]
+(defn link-field [link-kw default-text component-state]
   (let [current-value @component-state
         max-length 45
         diff (- max-length (count current-value))
@@ -17,18 +17,16 @@ in the Election Contact 'More Info' section.")
         change-fn (shared/max-length-change-fn
                    max-length component-state [::events/set-link-text link-kw])]
     [:div.col
+     [:p.mb-2 default-text]
      [:input.w-100 (merge (when current-value
                             {:value current-value})
                           border
                           {:on-change change-fn
+                           :max-length 45
                            :type "text"
                            :key (str link-kw "-input")
-                           :placeholder placeholder})]
+                           :placeholder default-text})]
      [shared/countdown diff]]))
-
-(defn link-row [current-links row]
-  [:div.row
-   (map (partial link-field current-links) row)])
 
 (defn customizer
   []
@@ -42,17 +40,20 @@ in the Election Contact 'More Info' section.")
     [:div
      [:p links-text]
      [:div.row
-      [link-field :electionInfoUrl "Election Information" election-info]
+      [link-field :electionInfoUrl "Election Information" election-info]]
+     [:div.row
       [link-field :electionRegistrationUrl "Registration Information"
        election-registration]]
      [:div.row
       [link-field :electionRegistrationConfirmationUrl
-       "Registration Confirmation" confirmation]
+       "Registration Confirmation" confirmation]]
+     [:div.row
       [link-field :absenteeVotingInfoUrl "Absentee Voting Information"
        absentee-voting]]
      [:div.row
       [link-field :votingLocationFinderUrl "Voting Location Finder"
-       voting-location]
+       voting-location]]
+     [:div.row
       [link-field :ballotInfoUrl "Ballot Information" ballot-info]]
      [:div.row
       [link-field :electionRulesUrl "Election Rules" election-rules]]]))

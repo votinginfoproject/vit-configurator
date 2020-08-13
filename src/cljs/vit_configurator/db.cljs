@@ -1,10 +1,10 @@
 (ns vit-configurator.db)
 
 (def default-db
-  {:logo {:type :default}
-   :title :default
-   :intro :default
-   :theme :default
-   :language :en
-   :official-data-only true
-   :links {}})
+  {:preview-ready false
+   :official-only true
+   :logo {:type :default}
+   :size :responsive
+   :config {:logo {:type :default}
+            :official-only true
+            :size :responsive}})

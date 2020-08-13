@@ -1,29 +1,30 @@
 (ns vit-configurator.views.language
   (:require [re-frame.core :as re-frame]
             [vit-configurator.events :as events]
-            [vit-configurator.subs :as subs]))
-
-(def language-text
-  "What language do you want to appear on your site?")
+            [vit-configurator.subs :as subs]
+            [vit-configurator.views.select-view :as sel-v]))
 
 (def languages
-  [[:en "English"]
-   [:es "Spanish"]])
-
-(defn option
-  [[kw text]]
-  [:option {:value kw :key (name kw)} text])
+  [[:none "Not Specified"]
+   [:en "English"]
+   [:es "Spanish"]
+   [:ja "Japanese"]
+   [:hy "Armenian"]
+   [:zh "Chinese" ]
+   [:fa "Farsi"]
+   [:hi "Hindi"]
+   [:km "Khmer"]
+   [:ko "Korean"]
+   [:ru "Russian"]
+   [:tl "Tagalog"]
+   [:th "Thai"]
+   [:vi "Vietnamese"]])
 
 (defn customizer
   []
-  (let [language @(re-frame/subscribe [::subs/language])]
-    [:div
-     [:p.mb-1 language-text]
-     [:select.mb-2 {:value language
-                    :on-change (fn [selection]
-                                 (let [abbrev (-> selection
-                                                  (.. -target -value)
-                                                  keyword)]
-                                   (re-frame/dispatch
-                                    [::events/set-language abbrev])))}
-      (map option languages)]]))
+  (let [options {:title-text "What default language do you want the tool to use?"
+                 :description-text "Leave set to 'Not Specified' if you want the tool to attempt to use the user's browser language setting to set itself. Otherwise you can override this with a pre-set default language. In both cases, the user can still use the language change option in the tool."
+                 :subscription (re-frame/subscribe [::subs/language])
+                 :event-kw ::events/set-language
+                 :options languages}]
+    (sel-v/select-card options)))

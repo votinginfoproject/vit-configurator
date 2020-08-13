@@ -1,20 +1,24 @@
 (ns vit-configurator.subs
-  (:require [re-frame.core :as re-frame]))
+  (:require [clojure.string :as str]
+            [re-frame.core :as re-frame]))
 
-(defn extract
-  "Takes vararg keywords/symbols that will form a keypath to
-  pull values from the db.
-  e.g.
-  (extract-path :foo)
-  (extract-path :foo :bar first)"
-  [& path]
-  (fn [db]
-    (get-in db path nil)))
+(defn get-or-nil
+  [kw]
+  (fn [db _] (get db kw nil)))
 
-(re-frame/reg-sub ::logo (extract :logo))
-(re-frame/reg-sub ::title (extract :title))
-(re-frame/reg-sub ::intro (extract :intro))
-(re-frame/reg-sub ::theme (extract :theme))
-(re-frame/reg-sub ::language (extract :language))
-(re-frame/reg-sub ::official-data-only (extract :official-data-only))
-(re-frame/reg-sub ::links (extract :links))
+(re-frame/reg-sub ::title (get-or-nil :title))
+(re-frame/reg-sub ::voter-info (get-or-nil :voter-info))
+(re-frame/reg-sub ::logo (get-or-nil :logo))
+(re-frame/reg-sub ::language (get-or-nil :language))
+(re-frame/reg-sub ::official-only (get-or-nil :official-only))
+(re-frame/reg-sub ::links (get-or-nil :links))
+(re-frame/reg-sub ::size (get-or-nil :size))
+
+(re-frame/reg-sub ::clj-config :config)
+
+(defn js-config
+  [db _]
+  (-> (:config db)
+      clj->js
+      (.stringify js/JSON)))
+(re-frame/reg-sub ::js-config js-config)
