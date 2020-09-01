@@ -6,8 +6,8 @@ if [ "$1" = "staging" ]; then
     BUCKET="s3://vit-configurator-staging.votinginfoproject.org/"
     CF_DISTRIBUTION_ID="E2BE40KNN4P0YJ"
 elif [ "$1" = "prod" ]; then
-    BUCKET="s3://vit-configurator-production.votinginfoproject.org/"
-    CF_DISTRIBUTION_ID="E1BTG2A8LCM7ST"
+    BUCKET="s3://customize.votinginfotool.org/"
+    CF_DISTRIBUTION_ID="ER4O47D0XPCS1"
 else
     echo "Usage: $0 [staging|prod]"
     exit 1
