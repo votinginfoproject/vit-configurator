@@ -103,9 +103,9 @@
 (defn preview-size [size]
   (if (= size :small)
     {:width "400px"
-     :height "480px"}
+     :height "500px"}
     {:width "700px"
-     :height "480px"}))
+     :height "500px"}))
 
 (defn code
   []
