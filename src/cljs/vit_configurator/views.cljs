@@ -14,10 +14,10 @@
 
 (defn size-str [size]
   (case size
-    :responsive "min-width: 320px, max-width: 640px"
-    :small "width: 320px"
-    :regular "width: 640px"
-    "min-width: 320px, max-width: 640px"))
+    :responsive "min-width: 320px; max-width: 640px; height: 480px;"
+    :small "width: 320px; height: 480px;"
+    :regular "width: 640px; height: 480px;"
+    "min-width: 320px, max-width: 640px; height: 480px;"))
 
 (defn code-snippet
   [{:keys [title logo language official-only links size voter-info]}]
