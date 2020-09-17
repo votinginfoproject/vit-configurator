@@ -22,7 +22,7 @@
 (defn code-snippet
   [{:keys [title logo language official-only links size voter-info]}]
   (str
-   "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.org/css/compiled/site.css\"/>\n"
+   "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://votinginfotool.org/css/compiled/vit.css\"/>\n"
    "<script src=\"https://votinginfotool.org/js/compiled/app.js\"></script>\n"
    (str "<div id=\"_vit\" style=\"" (size-str size) "\"></div>\n")
    "<script>\n"
