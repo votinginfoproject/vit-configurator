@@ -19,6 +19,12 @@
     :regular "width: 640px; height: 480px;"
     "min-width: 320px, max-width: 640px; height: 480px;"))
 
+(defn official-only-snippet [official-only]
+  (if official-only
+    (str "    \"official-only\": " (.stringify js/JSON official-only))
+    (str "    \"official-only\": " (.stringify js/JSON official-only) ",\n"
+         "    \"election-id\": \"7000\"")))
+
 (defn code-snippet
   [{:keys [title logo language official-only links size voter-info]}]
   (str
@@ -34,7 +40,7 @@
    "    \"logo\": " (.stringify js/JSON (clj->js logo)) ",\n"
    (when language
      (str "    \"language\": " (.stringify js/JSON (name language)) ",\n"))
-   "    \"official-only\": " (.stringify js/JSON official-only)
+   (official-only-snippet official-only)
    (when (seq links)
      (str ",\n    \"links\": " (.stringify js/JSON (clj->js links))))
    "\n  };\n"
