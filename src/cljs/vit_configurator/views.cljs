@@ -14,10 +14,11 @@
 
 (defn size-str [size]
   (case size
-    :responsive "min-width: 320px; max-width: 640px; height: 480px;"
-    :small "width: 320px; height: 480px;"
+    :responsive "min-width: 360px; max-width: 640px; height: 480px;"
+    :large-responsive "min-width: 360px; max-width: 960px; height: 480px;"
+    :small "width: 360px; height: 480px;"
     :regular "width: 640px; height: 480px;"
-    "min-width: 320px, max-width: 640px; height: 480px;"))
+    "min-width: 360px, max-width: 640px; height: 480px;"))
 
 (defn official-only-snippet [official-only]
   (if official-only
@@ -107,9 +108,15 @@
     (set! (.-location js/window) location)))
 
 (defn preview-size [size]
-  (if (= size :small)
+  (condp = size
+    :small
     {:width "400px"
      :height "500px"}
+
+    :large-responsive
+    {:width "980px"
+     :height "500px"}
+
     {:width "700px"
      :height "500px"}))
 
