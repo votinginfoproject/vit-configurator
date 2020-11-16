@@ -21,10 +21,7 @@
     "min-width: 360px, max-width: 640px; height: 480px;"))
 
 (defn official-only-snippet [official-only]
-  (if official-only
-    (str "    \"official-only\": " (.stringify js/JSON official-only))
-    (str "    \"official-only\": " (.stringify js/JSON official-only) ",\n"
-         "    \"election-id\": \"7000\"")))
+  (str "    \"official-only\": " (.stringify js/JSON official-only)))
 
 (defn code-snippet
   [{:keys [title logo language official-only links size voter-info]}]
