@@ -1,0 +1,19 @@
+steps:
+  - command: "script/build"
+    label: "Build"
+    agents:
+    - "region=us-west-2"
+
+  - wait
+
+  - command: "script/deploy staging"
+    label: "Deploy to Staging"
+    agents:
+    - "region=us-west-2"
+    branches: "!main"
+
+  - command: "script/deploy prod"
+    label: "Deploy to Production"
+    agents:
+    - "region=us-west-2"
+    branches: "main"
